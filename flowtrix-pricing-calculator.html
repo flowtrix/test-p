@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowtrix Pricing Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --success-dark: #059669;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --highlight: #fef3c7;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 16px;
+        }
+
+        @media (min-width: 640px) {
+            body {
+                padding: 20px;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        @media (min-width: 768px) {
+            header {
+                margin-bottom: 40px;
+            }
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 640px) {
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        @media (min-width: 640px) {
+            .subtitle {
+                font-size: 1.125rem;
+            }
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 32px;
+            align-items: start;
+        }
+
+        @media (min-width: 1024px) {
+            .calculator-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+                margin-top: 40px;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .calculator-grid {
+                grid-template-columns: 1.2fr 0.8fr;
+                gap: 28px;
+            }
+        }
+
+        /* Configuration column wrapper - prevents extreme widening */
+        .config-column {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .config-column {
+                max-width: 700px;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .config-column {
+                max-width: 750px;
+            }
+        }
+
+        /* Summary column wrapper */
+        .summary-column {
+            width: 100%;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        @media (min-width: 640px) {
+            .card {
+                padding: 24px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                padding: 30px;
+            }
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 640px) {
+            .section-title {
+                font-size: 1.25rem;
+                margin-bottom: 20px;
+            }
+        }
+
+        .option-group {
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .option-group {
+                margin-bottom: 30px;
+            }
+        }
+
+        .option-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .tier-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .tier-option {
+            position: relative;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--surface);
+        }
+
+        .tier-option:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .tier-option.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .tier-option.selected::before {
+            content: "✓";
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 26px;
+            height: 26px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            z-index: 10;
+        }
+
+        .tier-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-right: 36px;
+        }
+
+        .tier-option.selected .tier-header {
+            padding-right: 36px;
+        }
+
+        .tier-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+        }
+
+        .tier-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .tier-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .tier-timeline {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--success);
+            color: white;
+            margin-left: 8px;
+        }
+
+        .payment-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .payment-option {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary);
+        }
+
+        .payment-option.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .payment-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .payment-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .payment-discount {
+            font-weight: 600;
+            color: var(--success);
+            font-size: 0.875rem;
+        }
+
+        .payment-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-group:hover {
+            border-color: var(--primary);
+        }
+
+        .checkbox-group.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-content {
+            flex: 1;
+        }
+
+        .checkbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .checkbox-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .retainer-options {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+            padding-left: 32px;
+        }
+
+        .retainer-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .retainer-option input[type="radio"] {
+            accent-color: var(--primary);
+        }
+
+        .retainer-option label {
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .summary-card {
+            position: sticky;
+            top: 20px;
+            align-self: flex-start;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .clear-all-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .clear-all-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .clear-all-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .clear-all-btn:disabled:hover {
+            border-color: var(--border);
+            color: var(--text-secondary);
+            background: transparent;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .summary-value.discount {
+            color: var(--success);
+        }
+
+        .total-row {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+
+        .total-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .total-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .savings-badge {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .savings-text {
+            font-weight: 600;
+            color: #065f46;
+            font-size: 0.9375rem;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .includes-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .includes-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .includes-list {
+            list-style: none;
+        }
+
+        .includes-list li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .includes-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .timeline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        .info-badge {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 0.875rem;
+            color: #1e40af;
+        }
+
+        /* Add-ons Section */
+        .addons-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+
+        .addons-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .addons-trigger {
+            flex: 1;
+            padding: 14px 16px;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .addons-trigger:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .addons-trigger.active {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .addons-count {
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            padding: 2px 10px;
+            font-size: 0.875rem;
+            margin-left: 8px;
+        }
+
+        .select-all-btn {
+            padding: 10px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .select-all-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .addons-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .addons-grid.active {
+            display: grid;
+            max-height: 2000px;
+        }
+
+        .addon-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--surface);
+        }
+
+        .addon-item:hover {
+            border-color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .addon-item.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .addon-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .addon-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .addon-name {
+            font-weight: 500;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+        }
+
+        .addon-price {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9375rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Quantity Selector */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding-left: 28px;
+        }
+
+        .quantity-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .quantity-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .quantity-value {
+            min-width: 32px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .quantity-subtotal {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-left: 8px;
+        }
+
+        /* Tier Actions */
+        .tier-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tier-action-btn {
+            flex: 1;
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .tier-action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .compare-button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .compare-button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: fadeIn 0.2s ease;
+            overflow-y: auto;
+        }
+
+        @media (min-width: 640px) {
+            .modal-overlay {
+                padding: 20px;
+            }
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 12px;
+            max-width: 95vw;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s ease;
+            margin: auto;
+        }
+
+        @media (min-width: 640px) {
+            .modal-content {
+                max-width: 90vw;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .modal-content {
+                max-width: 900px;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            z-index: 10;
+        }
+
+        @media (min-width: 640px) {
+            .modal-header {
+                padding: 20px 24px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .modal-header {
+                padding: 24px;
+            }
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        @media (min-width: 640px) {
+            .modal-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 16px 20px;
+        }
+
+        @media (min-width: 640px) {
+            .modal-body {
+                padding: 20px 24px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .modal-body {
+                padding: 24px;
+            }
+        }
+
+        /* Comparison Table */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        @media (min-width: 640px) {
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+                font-size: 0.9375rem;
+            }
+        }
+
+        .comparison-table th {
+            background: var(--background);
+            font-weight: 600;
+            color: var(--text-primary);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .comparison-table td {
+            color: var(--text-secondary);
+        }
+
+        .comparison-table .check {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .comparison-table .feature-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Tier Detail View */
+        .tier-detail-section {
+            margin-bottom: 24px;
+        }
+
+        .tier-detail-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .tier-detail-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tier-detail-list li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .tier-detail-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .tier-price-box {
+            background: var(--background);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .tier-price-large {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .tier-timeline-large {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .cta-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Flowtrix Pricing Calculator</h1>
+            <p class="subtitle">Configure your perfect package and see instant pricing with all available discounts</p>
+        </header>
+
+        <div class="calculator-grid">
+            <!-- Left Column: Configuration -->
+            <div class="config-column">
+                <!-- Project Tier Selection -->
+                <div class="card">
+                    <h2 class="section-title">1. Choose Your Project Tier</h2>
+                    
+                    <div class="option-group">
+                        <div class="tier-options">
+                            <!-- Strategy Sprint -->
+                            <label class="tier-option" id="tier-sprint">
+                                <input type="radio" name="tier" value="sprint" checked>
+                                <div class="tier-header">
+                                    <div class="tier-name">Strategy Sprint</div>
+                                    <div class="tier-price">$7,000</div>
+                                </div>
+                                <div class="tier-description">10-day audit + roadmap • Credits toward project</div>
+                                <div class="tier-timeline">
+                                    <span>⏱</span>
+                                    <span>10 business days</span>
+                                </div>
+                                <div class="tier-actions">
+                                    <button type="button" class="tier-action-btn" onclick="showTierDetail('sprint'); event.stopPropagation();">📋 View Details</button>
+                                </div>
+                            </label>
+
+                            <!-- Tier 1 -->
+                            <label class="tier-option" id="tier-1">
+                                <input type="radio" name="tier" value="tier1">
+                                <div class="tier-header">
+                                    <div class="tier-name">Tier 1: Foundation</div>
+                                    <div class="tier-price">$25,000</div>
+                                </div>
+                                <div class="tier-description">10 pages • Baseline CMS • 6-7 weeks</div>
+                                <div class="tier-timeline">
+                                    <span>⏱</span>
+                                    <span>6-7 weeks delivery</span>
+                                </div>
+                                <div class="tier-actions">
+                                    <button type="button" class="tier-action-btn" onclick="showTierDetail('tier1'); event.stopPropagation();">📋 View Details</button>
+                                </div>
+                            </label>
+
+                            <!-- Tier 2 -->
+                            <label class="tier-option" id="tier-2">
+                                <input type="radio" name="tier" value="tier2">
+                                <div class="tier-header">
+                                    <div class="tier-name">Tier 2: Growth <span class="badge">Most Popular</span></div>
+                                    <div class="tier-price">$45,000</div>
+                                </div>
+                                <div class="tier-description">18 pages • Scalable CMS • Landing page system • 2 post-launch iterations</div>
+                                <div class="tier-timeline">
+                                    <span>⏱</span>
+                                    <span>8-10 weeks delivery</span>
+                                </div>
+                                <div class="tier-actions">
+                                    <button type="button" class="tier-action-btn" onclick="showTierDetail('tier2'); event.stopPropagation();">📋 View Details</button>
+                                </div>
+                            </label>
+
+                            <!-- Tier 3 -->
+                            <label class="tier-option" id="tier-3">
+                                <input type="radio" name="tier" value="tier3">
+                                <div class="tier-header">
+                                    <div class="tier-name">Tier 3: Enterprise</div>
+                                    <div class="tier-price">$75,000</div>
+                                </div>
+                                <div class="tier-description">25 pages • Advanced CMS • 2 custom integrations • 4 post-launch iterations</div>
+                                <div class="tier-timeline">
+                                    <span>⏱</span>
+                                    <span>10-12 weeks delivery</span>
+                                </div>
+                                <div class="tier-actions">
+                                    <button type="button" class="tier-action-btn" onclick="showTierDetail('tier3'); event.stopPropagation();">📋 View Details</button>
+                                </div>
+                            </label>
+                        </div>
+
+                        <button type="button" class="compare-button" onclick="showComparison()">🔍 Compare All Tiers</button>
+                    </div>
+
+                    <!-- Payment Option (only for tiers, not sprint) -->
+                    <div class="option-group" id="payment-section" style="display: none;">
+                        <label class="option-label">2. Payment Option</label>
+                        <div class="payment-options">
+                            <label class="payment-option selected" id="payment-standard">
+                                <input type="radio" name="payment" value="standard" checked>
+                                <div class="payment-header">
+                                    <div class="payment-name">Standard Payment</div>
+                                    <div class="payment-discount"></div>
+                                </div>
+                                <div class="payment-description">Split payments over project timeline</div>
+                            </label>
+
+                            <label class="payment-option" id="payment-upfront">
+                                <input type="radio" name="payment" value="upfront">
+                                <div class="payment-header">
+                                    <div class="payment-name">100% Upfront Payment</div>
+                                    <div class="payment-discount">Save 7.5%</div>
+                                </div>
+                                <div class="payment-description">Pay full amount at contract signing</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Retainer Option -->
+                    <div class="option-group">
+                        <label class="checkbox-group" id="retainer-checkbox">
+                            <input type="checkbox" id="add-retainer">
+                            <div class="checkbox-content">
+                                <div class="checkbox-header">
+                                    <div class="checkbox-title">Add Ongoing Retainer</div>
+                                </div>
+                                <div class="payment-description">Continuous optimization & new landing pages</div>
+                                
+                                <div class="retainer-options" id="retainer-options" style="display: none;">
+                                    <div class="retainer-option">
+                                        <input type="radio" name="retainer-tier" value="essential" id="retainer-essential">
+                                        <label for="retainer-essential">
+                                            <span>Essential - $5,000/mo (20 hours)</span>
+                                        </label>
+                                    </div>
+                                    <div class="retainer-option">
+                                        <input type="radio" name="retainer-tier" value="growth" id="retainer-growth" checked>
+                                        <label for="retainer-growth">
+                                            <span>Growth - $8,000/mo (40 hours) ⭐</span>
+                                        </label>
+                                    </div>
+                                    <div class="retainer-option">
+                                        <input type="radio" name="retainer-tier" value="scale" id="retainer-scale">
+                                        <label for="retainer-scale">
+                                            <span>Scale - $15,000/mo (80 hours)</span>
+                                        </label>
+                                    </div>
+
+                                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+                                        <label class="option-label" style="font-size: 0.875rem; margin-bottom: 8px;">Commitment Period:</label>
+                                        <div class="retainer-option">
+                                            <input type="radio" name="retainer-period" value="monthly" id="retainer-monthly">
+                                            <label for="retainer-monthly">
+                                                <span>Monthly (no discount)</span>
+                                            </label>
+                                        </div>
+                                        <div class="retainer-option">
+                                            <input type="radio" name="retainer-period" value="quarterly" id="retainer-quarterly" checked>
+                                            <label for="retainer-quarterly">
+                                                <span>Quarterly (3 months) - Save 5%</span>
+                                            </label>
+                                        </div>
+                                        <div class="retainer-option">
+                                            <input type="radio" name="retainer-period" value="biannual" id="retainer-biannual">
+                                            <label for="retainer-biannual">
+                                                <span>Biannual (6 months) - Save 10%</span>
+                                            </label>
+                                        </div>
+                                        <div class="retainer-option">
+                                            <input type="radio" name="retainer-period" value="annual" id="retainer-annual">
+                                            <label for="retainer-annual">
+                                                <span>Annual (12 months) - Save 15%</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Add-ons Section -->
+                    <div class="option-group">
+                        <div class="addons-header">
+                            <button type="button" class="addons-trigger" id="addons-trigger" onclick="toggleAddons()">
+                                <span>➕ Add Optional Services</span>
+                                <span class="addons-count" id="addons-count" style="display: none;">0</span>
+                            </button>
+                            <button type="button" class="select-all-btn" id="select-all-btn" onclick="toggleSelectAll()" style="display: none;">
+                                Select All
+                            </button>
+                        </div>
+                        
+                        <div class="addons-grid" id="addons-grid">
+                            <!-- Copywriting -->
+                            <label class="addon-item" data-addon="copy-homepage">
+                                <input type="checkbox" class="addon-checkbox" data-price="3000" data-name="Copywriting: Homepage" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">Copywriting: Homepage</div>
+                                </div>
+                                <div class="addon-price">$3,000</div>
+                            </label>
+
+                            <div class="addon-item" data-addon="copy-page">
+                                <div style="display: flex; align-items: flex-start; gap: 10px; width: 100%;">
+                                    <input type="checkbox" class="addon-checkbox" data-price="1200" data-name="Copywriting: Core Pages" data-type="quantity" data-addon-id="copy-page">
+                                    <div class="addon-content">
+                                        <div class="addon-name">Copywriting: Core Pages</div>
+                                        <div class="quantity-selector" id="quantity-copy-page" style="display: none;">
+                                            <span class="quantity-label">Pages:</span>
+                                            <div class="quantity-controls">
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('copy-page', -1); event.stopPropagation();">−</button>
+                                                <span class="quantity-value" id="qty-copy-page">1</span>
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('copy-page', 1); event.stopPropagation();">+</button>
+                                            </div>
+                                            <span class="quantity-subtotal" id="subtotal-copy-page">$1,200</span>
+                                        </div>
+                                    </div>
+                                    <div class="addon-price" id="price-copy-page">$1,200/page</div>
+                                </div>
+                            </div>
+
+                            <!-- Landing Pages -->
+                            <div class="addon-item" data-addon="landing-template">
+                                <div style="display: flex; align-items: flex-start; gap: 10px; width: 100%;">
+                                    <input type="checkbox" class="addon-checkbox" data-price="1500" data-name="Extra Landing Pages (Template)" data-type="quantity" data-addon-id="landing-template">
+                                    <div class="addon-content">
+                                        <div class="addon-name">Extra Landing Pages (Template)</div>
+                                        <div class="quantity-selector" id="quantity-landing-template" style="display: none;">
+                                            <span class="quantity-label">Pages:</span>
+                                            <div class="quantity-controls">
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('landing-template', -1); event.stopPropagation();">−</button>
+                                                <span class="quantity-value" id="qty-landing-template">1</span>
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('landing-template', 1); event.stopPropagation();">+</button>
+                                            </div>
+                                            <span class="quantity-subtotal" id="subtotal-landing-template">$1,500</span>
+                                        </div>
+                                    </div>
+                                    <div class="addon-price" id="price-landing-template">$1,500/page</div>
+                                </div>
+                            </div>
+
+                            <div class="addon-item" data-addon="landing-custom">
+                                <div style="display: flex; align-items: flex-start; gap: 10px; width: 100%;">
+                                    <input type="checkbox" class="addon-checkbox" data-price="2500" data-name="Extra Landing Pages (Custom)" data-type="quantity" data-addon-id="landing-custom">
+                                    <div class="addon-content">
+                                        <div class="addon-name">Extra Landing Pages (Custom)</div>
+                                        <div class="quantity-selector" id="quantity-landing-custom" style="display: none;">
+                                            <span class="quantity-label">Pages:</span>
+                                            <div class="quantity-controls">
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('landing-custom', -1); event.stopPropagation();">−</button>
+                                                <span class="quantity-value" id="qty-landing-custom">1</span>
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('landing-custom', 1); event.stopPropagation();">+</button>
+                                            </div>
+                                            <span class="quantity-subtotal" id="subtotal-landing-custom">$2,500</span>
+                                        </div>
+                                    </div>
+                                    <div class="addon-price" id="price-landing-custom">$2,500/page</div>
+                                </div>
+                            </div>
+
+                            <!-- Integrations -->
+                            <label class="addon-item" data-addon="hubspot">
+                                <input type="checkbox" class="addon-checkbox" data-price="2000" data-name="HubSpot Integration" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">HubSpot Integration</div>
+                                </div>
+                                <div class="addon-price">$2,000</div>
+                            </label>
+
+                            <label class="addon-item" data-addon="salesforce">
+                                <input type="checkbox" class="addon-checkbox" data-price="4000" data-name="Salesforce/CRM Routing" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">Salesforce/CRM Routing</div>
+                                </div>
+                                <div class="addon-price">$4,000</div>
+                            </label>
+
+                            <!-- Advanced Features -->
+                            <label class="addon-item" data-addon="cms-filtering">
+                                <input type="checkbox" class="addon-checkbox" data-price="3000" data-name="Advanced CMS Filtering" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">Advanced CMS Filtering</div>
+                                </div>
+                                <div class="addon-price">$3,000</div>
+                            </label>
+
+                            <div class="addon-item" data-addon="multilang">
+                                <div style="display: flex; align-items: flex-start; gap: 10px; width: 100%;">
+                                    <input type="checkbox" class="addon-checkbox" data-price="2000" data-name="Multi-language Setup" data-type="quantity" data-addon-id="multilang">
+                                    <div class="addon-content">
+                                        <div class="addon-name">Multi-language Setup</div>
+                                        <div class="quantity-selector" id="quantity-multilang" style="display: none;">
+                                            <span class="quantity-label">Locales:</span>
+                                            <div class="quantity-controls">
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('multilang', -1); event.stopPropagation();">−</button>
+                                                <span class="quantity-value" id="qty-multilang">1</span>
+                                                <button type="button" class="quantity-btn" onclick="updateQuantity('multilang', 1); event.stopPropagation();">+</button>
+                                            </div>
+                                            <span class="quantity-subtotal" id="subtotal-multilang">$2,000</span>
+                                        </div>
+                                    </div>
+                                    <div class="addon-price" id="price-multilang">$2,000/locale</div>
+                                </div>
+                            </div>
+
+                            <label class="addon-item" data-addon="chatbot">
+                                <input type="checkbox" class="addon-checkbox" data-price="2500" data-name="AI Chatbot Integration" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">AI Chatbot Integration</div>
+                                </div>
+                                <div class="addon-price">$2,500</div>
+                            </label>
+
+                            <label class="addon-item" data-addon="analytics">
+                                <input type="checkbox" class="addon-checkbox" data-price="2000" data-name="Analytics Setup (GA4 + GTM)" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">Analytics Setup (GA4 + GTM)</div>
+                                </div>
+                                <div class="addon-price">$2,000</div>
+                            </label>
+
+                            <!-- Migration -->
+                            <label class="addon-item" data-addon="migration">
+                                <input type="checkbox" class="addon-checkbox" data-price="10000" data-name="Platform Migration" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">Platform Migration (WordPress/HubSpot)</div>
+                                </div>
+                                <div class="addon-price">$10,000</div>
+                            </label>
+
+                            <!-- Branding -->
+                            <label class="addon-item" data-addon="branding">
+                                <input type="checkbox" class="addon-checkbox" data-price="8000" data-name="Brand Identity Package" data-type="single">
+                                <div class="addon-content">
+                                    <div class="addon-name">Brand Identity Package</div>
+                                </div>
+                                <div class="addon-price">$8,000+</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Summary -->
+            <div class="summary-column">
+                <div class="card summary-card">
+                    <div class="summary-header">
+                        <h2 class="section-title" style="margin-bottom: 0;">Your Investment Summary</h2>
+                        <button type="button" class="clear-all-btn" id="clear-all-btn" onclick="clearAllSelections()" disabled>
+                            Clear All
+                        </button>
+                    </div>
+
+                    <!-- Project Cost -->
+                    <div class="summary-row">
+                        <div class="summary-label" id="project-label">Strategy Sprint</div>
+                        <div class="summary-value" id="project-cost">$7,000</div>
+                    </div>
+
+                    <!-- Project Discount (if applicable) -->
+                    <div class="summary-row" id="project-discount-row" style="display: none;">
+                        <div class="summary-label">Upfront Payment Discount (7.5%)</div>
+                        <div class="summary-value discount" id="project-discount">-$0</div>
+                    </div>
+
+                    <!-- Sprint Credit (if applicable) -->
+                    <div class="summary-row" id="sprint-credit-row" style="display: none;">
+                        <div class="summary-label">Strategy Sprint Credit</div>
+                        <div class="summary-value discount" id="sprint-credit">-$7,000</div>
+                    </div>
+
+                    <!-- Retainer Cost -->
+                    <div class="summary-row" id="retainer-cost-row" style="display: none;">
+                        <div class="summary-label" id="retainer-label">Retainer (3 months)</div>
+                        <div class="summary-value" id="retainer-cost">$0</div>
+                    </div>
+
+                    <!-- Retainer Discount -->
+                    <div class="summary-row" id="retainer-discount-row" style="display: none;">
+                        <div class="summary-label" id="retainer-discount-label">Retainer Discount (5%)</div>
+                        <div class="summary-value discount" id="retainer-discount">-$0</div>
+                    </div>
+
+                    <!-- Add-ons Cost -->
+                    <div class="summary-row" id="addons-cost-row" style="display: none;">
+                        <div class="summary-label" id="addons-label">Add-ons</div>
+                        <div class="summary-value" id="addons-cost">$0</div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="summary-row total-row">
+                        <div class="total-label">Total Investment</div>
+                        <div class="total-value" id="total-cost">$7,000</div>
+                    </div>
+
+                    <!-- Savings Badge -->
+                    <div class="savings-badge" id="savings-badge" style="display: none;">
+                        <div class="savings-text">💰 You save <span id="total-savings">$0</span> with these discounts!</div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="timeline-badge" id="timeline-badge">
+                        <span>🚀</span>
+                        <span id="timeline-text">Delivered in 10 business days</span>
+                    </div>
+
+                    <!-- Info Badge -->
+                    <div class="info-badge" id="info-badge">
+                        💡 <strong>Strategy Sprint credits forward:</strong> If you proceed with a full project within 30 days, your $7,000 investment credits toward the build.
+                    </div>
+
+                    <!-- What's Included -->
+                    <div class="includes-section">
+                        <div class="includes-title">What's Included:</div>
+                        <ul class="includes-list" id="includes-list">
+                            <li>Notion roadmap & sitemap</li>
+                            <li>UX direction & wireframes</li>
+                            <li>Visual moodboard</li>
+                            <li>Technical SEO plan</li>
+                            <li>Conversion tracking plan</li>
+                        </ul>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <button class="cta-button" onclick="handleCTA()">Book Discovery Call →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Modal -->
+    <div class="modal-overlay" id="comparison-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Compare All Tiers</h2>
+                <button class="modal-close" onclick="closeModal('comparison-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-wrapper">
+                    <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Foundation</th>
+                            <th>Growth ⭐</th>
+                            <th>Enterprise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="feature-name">Investment</td>
+                            <td>$25,000</td>
+                            <td>$45,000</td>
+                            <td>$75,000</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Timeline</td>
+                            <td>6-7 weeks</td>
+                            <td>8-10 weeks</td>
+                            <td>10-12 weeks</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Pages</td>
+                            <td>Up to 10</td>
+                            <td>Up to 18</td>
+                            <td>Up to 25</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Discovery & Strategy</td>
+                            <td>Light</td>
+                            <td>Deep positioning</td>
+                            <td>Executive workshops</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">CMS Setup</td>
+                            <td>Baseline</td>
+                            <td>Scalable</td>
+                            <td>Advanced multi-collection</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Landing Page System</td>
+                            <td>—</td>
+                            <td class="check">✓</td>
+                            <td class="check">✓</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Custom Integrations</td>
+                            <td>Basic</td>
+                            <td>Standard</td>
+                            <td>2 included</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Design Revisions</td>
+                            <td>2 rounds</td>
+                            <td>2 rounds</td>
+                            <td>3 rounds</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Build Revisions</td>
+                            <td>2 rounds</td>
+                            <td>2 rounds</td>
+                            <td>3 rounds</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Post-Launch Optimization</td>
+                            <td>—</td>
+                            <td>2 iterations</td>
+                            <td>4 iterations</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Migration Support</td>
+                            <td>Add-on</td>
+                            <td>Add-on</td>
+                            <td class="check">✓ Included</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Training</td>
+                            <td>2 hours</td>
+                            <td>4 hours</td>
+                            <td>Extended sessions</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Best For</td>
+                            <td>Small sites, fast launch</td>
+                            <td>Growth-stage, campaigns</td>
+                            <td>Complex orgs, migrations</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tier Detail Modal -->
+    <div class="modal-overlay" id="tier-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="tier-detail-title">Tier Details</h2>
+                <button class="modal-close" onclick="closeModal('tier-detail-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="tier-detail-body">
+                <!-- Dynamic content loaded by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pricing data
+        const pricing = {
+            tiers: {
+                sprint: { 
+                    price: 7000, 
+                    name: 'Strategy Sprint',
+                    timeline: '10 business days',
+                    includes: [
+                        'Notion roadmap & sitemap',
+                        'UX direction & wireframes',
+                        'Visual moodboard',
+                        'Technical SEO plan',
+                        'Conversion tracking plan'
+                    ],
+                    details: {
+                        overview: 'A comprehensive 10-day strategic audit and roadmap for your website transformation.',
+                        deliverables: [
+                            'Notion roadmap with prioritized features',
+                            'Complete sitemap architecture',
+                            'UX direction and wireframe concepts',
+                            'Visual moodboard with design direction',
+                            'Technical SEO audit and recommendations',
+                            'Conversion tracking and analytics plan',
+                            'Migration risk assessment (if applicable)'
+                        ],
+                        process: [
+                            'Day 1-2: Stakeholder interviews and competitive analysis',
+                            'Day 3-5: UX architecture and wireframing',
+                            'Day 6-7: Visual direction and moodboard creation',
+                            'Day 8-9: Technical planning and documentation',
+                            'Day 10: Final presentation and roadmap delivery'
+                        ],
+                        bestFor: [
+                            'Companies unsure about scope or direction',
+                            'Teams needing executive buy-in with data',
+                            'Organizations wanting to de-risk investment',
+                            'Anyone who wants strategic clarity before building'
+                        ]
+                    }
+                },
+                tier1: { 
+                    price: 25000, 
+                    name: 'Tier 1: Foundation',
+                    timeline: '6-7 weeks',
+                    includes: [
+                        'Up to 10 pages designed & built',
+                        'Baseline CMS setup',
+                        'Standard integrations',
+                        'Core component library',
+                        '2 revision rounds',
+                        'Client training (2 hours)'
+                    ],
+                    details: {
+                        overview: 'Perfect for startups and early-stage companies needing a clean, professional foundation quickly.',
+                        deliverables: [
+                            'Up to 10 fully designed and built pages',
+                            'Baseline CMS for blog/resources',
+                            'Standard forms and integrations',
+                            'Reusable component library',
+                            'Mobile-responsive design',
+                            'SEO optimization',
+                            '2 hours of team training',
+                            '2 weeks post-launch support'
+                        ],
+                        process: [
+                            'Week 1: Discovery, strategy, and sitemap approval',
+                            'Weeks 2-3: Design (homepage + core pages)',
+                            'Weeks 4-5: Webflow build and CMS setup',
+                            'Week 6-7: QA, training, and launch'
+                        ],
+                        bestFor: [
+                            'Series A companies ($3M-$15M ARR)',
+                            'Content is mostly ready',
+                            'Small sites needing speed over complexity',
+                            'Limited stakeholder involvement',
+                            'Budget-conscious teams'
+                        ]
+                    }
+                },
+                tier2: { 
+                    price: 45000, 
+                    name: 'Tier 2: Growth',
+                    timeline: '8-10 weeks',
+                    includes: [
+                        'Up to 18 pages designed & built',
+                        'Deep positioning & messaging',
+                        'Scalable CMS system',
+                        'Landing page system',
+                        'Conversion tracking setup',
+                        '2 post-launch iterations',
+                        'Client training (4 hours)'
+                    ],
+                    details: {
+                        overview: 'Our most popular tier for growth-stage companies that need both strategy and execution.',
+                        deliverables: [
+                            'Up to 18 fully designed and built pages',
+                            'Deep positioning and messaging framework',
+                            'Scalable CMS with relationships',
+                            'Landing page template system',
+                            'Advanced conversion tracking (GA4, GTM)',
+                            'Dual-audience architecture',
+                            '2 post-launch optimization iterations',
+                            '4 hours of extended training',
+                            '1 month post-launch support'
+                        ],
+                        process: [
+                            'Weeks 1-2: Discovery, positioning, and messaging',
+                            'Weeks 3-4: Design system and all pages',
+                            'Weeks 5-7: Build, integrations, and optimization',
+                            'Week 8: QA, training, and launch',
+                            'Weeks 9-10: Post-launch iterations based on data'
+                        ],
+                        bestFor: [
+                            'Series B-C companies ($15M-$50M ARR)',
+                            'Pipeline-driven marketing teams',
+                            'Running paid campaigns or planning to',
+                            'Need landing page velocity',
+                            'Want post-launch optimization'
+                        ]
+                    }
+                },
+                tier3: { 
+                    price: 75000, 
+                    name: 'Tier 3: Enterprise',
+                    timeline: '10-12 weeks',
+                    includes: [
+                        'Up to 25 pages designed & built',
+                        'Executive discovery workshops',
+                        'Multi-product narrative',
+                        'Advanced CMS with relationships',
+                        '2 custom integrations included',
+                        'Migration support',
+                        '4 post-launch iterations',
+                        'Extended training sessions'
+                    ],
+                    details: {
+                        overview: 'Enterprise-grade transformation for complex organizations with multiple stakeholders and products.',
+                        deliverables: [
+                            'Up to 25 fully designed and built pages',
+                            'Executive-level discovery workshops',
+                            'Multi-product narrative architecture',
+                            'Advanced CMS with multi-collection relationships',
+                            '2 custom integrations (Salesforce, etc.)',
+                            'Platform migration support included',
+                            'Advanced security and compliance setup',
+                            '4 post-launch optimization iterations',
+                            'Extended training for multiple teams',
+                            '2 months post-launch support'
+                        ],
+                        process: [
+                            'Weeks 1-2: Executive discovery and stakeholder mapping',
+                            'Weeks 3-4: Advanced UX and wireframing',
+                            'Weeks 5-6: Premium design system',
+                            'Weeks 7-9: Build, custom integrations, migration',
+                            'Week 10: Comprehensive QA and security audit',
+                            'Week 11: Launch, training, and handoff',
+                            'Week 12+: 4 optimization iterations over 4 months'
+                        ],
+                        bestFor: [
+                            'Series C-D companies ($50M+ ARR)',
+                            'Complex orgs with multiple products',
+                            'Platform migrations required',
+                            'Governance and compliance needs',
+                            'High launch risk (enterprise buyers evaluating)'
+                        ]
+                    }
+                }
+            },
+            retainers: {
+                essential: { monthly: 5000, name: 'Essential Retainer (20 hours/mo)' },
+                growth: { monthly: 8000, name: 'Growth Retainer (40 hours/mo)' },
+                scale: { monthly: 15000, name: 'Scale Retainer (80 hours/mo)' }
+            },
+            discounts: {
+                upfront: 0.075, // 7.5%
+                retainer: {
+                    monthly: 0,
+                    quarterly: 0.05,  // 5%
+                    biannual: 0.10,   // 10%
+                    annual: 0.15      // 15%
+                }
+            }
+        };
+
+        // State
+        let state = {
+            tier: 'sprint',
+            payment: 'standard',
+            retainerEnabled: false,
+            retainerTier: 'growth',
+            retainerPeriod: 'quarterly',
+            addons: [],
+            quantities: {
+                'copy-page': 1,
+                'landing-template': 1,
+                'landing-custom': 1,
+                'multilang': 1
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            updateCalculator();
+        });
+
+        function setupEventListeners() {
+            // Tier selection
+            document.querySelectorAll('input[name="tier"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    state.tier = e.target.value;
+                    updateTierSelection();
+                    updateCalculator();
+                    updateClearAllButton();
+                });
+            });
+
+            // Payment option
+            document.querySelectorAll('input[name="payment"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    state.payment = e.target.value;
+                    updatePaymentSelection();
+                    updateCalculator();
+                });
+            });
+
+            // Retainer checkbox
+            const retainerCheckbox = document.getElementById('add-retainer');
+            if (retainerCheckbox) {
+                retainerCheckbox.addEventListener('change', (e) => {
+                    state.retainerEnabled = e.target.checked;
+                    const retainerOptions = document.getElementById('retainer-options');
+                    const retainerCheckboxGroup = document.getElementById('retainer-checkbox');
+                    if (retainerOptions) {
+                        retainerOptions.style.display = e.target.checked ? 'block' : 'none';
+                    }
+                    if (retainerCheckboxGroup) {
+                        if (e.target.checked) {
+                            retainerCheckboxGroup.classList.add('selected');
+                        } else {
+                            retainerCheckboxGroup.classList.remove('selected');
+                        }
+                    }
+                    updateCalculator();
+                    updateClearAllButton();
+                });
+            }
+
+            // Retainer tier
+            document.querySelectorAll('input[name="retainer-tier"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    state.retainerTier = e.target.value;
+                    updateCalculator();
+                });
+            });
+
+            // Retainer period
+            document.querySelectorAll('input[name="retainer-period"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    state.retainerPeriod = e.target.value;
+                    updateCalculator();
+                });
+            });
+
+            // Add-ons checkboxes
+            document.querySelectorAll('.addon-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    handleAddonChange(e);
+                });
+            });
+        }
+
+        function handleAddonChange(e) {
+            const parent = e.target.closest('.addon-item');
+            const addonType = e.target.dataset.type;
+            const addonId = e.target.dataset.addonId;
+            
+            if (e.target.checked) {
+                if (parent) parent.classList.add('selected');
+                
+                const basePrice = parseFloat(e.target.dataset.price);
+                let quantity = 1;
+                
+                if (addonType === 'quantity' && addonId) {
+                    quantity = state.quantities[addonId] || 1;
+                    const quantitySelector = document.getElementById(`quantity-${addonId}`);
+                    if (quantitySelector) {
+                        quantitySelector.style.display = 'flex';
+                    }
+                }
+                
+                state.addons.push({
+                    id: addonId || e.target.dataset.name,
+                    name: e.target.dataset.name,
+                    basePrice: basePrice,
+                    quantity: quantity,
+                    type: addonType
+                });
+            } else {
+                if (parent) parent.classList.remove('selected');
+                
+                if (addonType === 'quantity' && addonId) {
+                    const quantitySelector = document.getElementById(`quantity-${addonId}`);
+                    if (quantitySelector) {
+                        quantitySelector.style.display = 'none';
+                    }
+                }
+                
+                const id = addonId || e.target.dataset.name;
+                state.addons = state.addons.filter(a => a.id !== id);
+            }
+            updateAddonsCount();
+            updateSelectAllButton();
+            updateCalculator();
+            updateClearAllButton();
+        }
+
+        function toggleSelectAll() {
+            const checkboxes = document.querySelectorAll('.addon-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            checkboxes.forEach(checkbox => {
+                if (allChecked) {
+                    // Unselect all
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        const event = new Event('change', { bubbles: true });
+                        checkbox.dispatchEvent(event);
+                    }
+                } else {
+                    // Select all
+                    if (!checkbox.checked) {
+                        checkbox.checked = true;
+                        const event = new Event('change', { bubbles: true });
+                        checkbox.dispatchEvent(event);
+                    }
+                }
+            });
+            
+            updateSelectAllButton();
+        }
+
+        function updateSelectAllButton() {
+            const selectAllBtn = document.getElementById('select-all-btn');
+            if (!selectAllBtn) return;
+            
+            const checkboxes = document.querySelectorAll('.addon-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            if (allChecked) {
+                selectAllBtn.textContent = 'Unselect All';
+            } else {
+                selectAllBtn.textContent = 'Select All';
+            }
+        }
+
+        function clearAllSelections() {
+            // Clear tier selection (reset to Sprint)
+            const sprintRadio = document.querySelector('input[name="tier"][value="sprint"]');
+            if (sprintRadio) {
+                sprintRadio.checked = true;
+                state.tier = 'sprint';
+                updateTierSelection();
+            }
+            
+            // Clear payment
+            state.payment = 'standard';
+            const standardPayment = document.querySelector('input[name="payment"][value="standard"]');
+            if (standardPayment) {
+                standardPayment.checked = true;
+            }
+            updatePaymentSelection();
+            
+            // Clear retainer
+            const retainerCheckbox = document.getElementById('add-retainer');
+            if (retainerCheckbox && retainerCheckbox.checked) {
+                retainerCheckbox.checked = false;
+                const event = new Event('change', { bubbles: true });
+                retainerCheckbox.dispatchEvent(event);
+            }
+            
+            // Clear all addons
+            document.querySelectorAll('.addon-checkbox').forEach(checkbox => {
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    const event = new Event('change', { bubbles: true });
+                    checkbox.dispatchEvent(event);
+                }
+            });
+            
+            updateCalculator();
+            updateClearAllButton();
+        }
+
+        function updateClearAllButton() {
+            const clearAllBtn = document.getElementById('clear-all-btn');
+            if (!clearAllBtn) return;
+            
+            // Enable if anything is selected beyond the default Sprint tier
+            const hasSelections = state.tier !== 'sprint' || 
+                                state.payment !== 'standard' || 
+                                state.retainerEnabled || 
+                                state.addons.length > 0;
+            
+            clearAllBtn.disabled = !hasSelections;
+        }
+
+        function updateQuantity(addonId, delta) {
+            const current = state.quantities[addonId] || 1;
+            const newQty = Math.max(1, Math.min(99, current + delta));
+            state.quantities[addonId] = newQty;
+            
+            // Update UI
+            const qtyDisplay = document.getElementById(`qty-${addonId}`);
+            if (qtyDisplay) {
+                qtyDisplay.textContent = newQty;
+            }
+            
+            // Update addon in state
+            const addon = state.addons.find(a => a.id === addonId);
+            if (addon) {
+                addon.quantity = newQty;
+                const subtotal = addon.basePrice * newQty;
+                const subtotalDisplay = document.getElementById(`subtotal-${addonId}`);
+                if (subtotalDisplay) {
+                    subtotalDisplay.textContent = formatCurrency(subtotal);
+                }
+            }
+            
+            updateCalculator();
+        }
+
+        function updateTierSelection() {
+            // Update visual selection - remove from all first
+            document.querySelectorAll('.tier-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add to currently selected
+            const selectedTier = document.getElementById(`tier-${state.tier}`);
+            if (selectedTier) {
+                selectedTier.classList.add('selected');
+            }
+
+            // Show/hide payment section (not for sprint)
+            const paymentSection = document.getElementById('payment-section');
+            if (paymentSection) {
+                paymentSection.style.display = state.tier === 'sprint' ? 'none' : 'block';
+            }
+
+            // Reset payment to standard if switching to sprint
+            if (state.tier === 'sprint') {
+                state.payment = 'standard';
+                const standardPayment = document.querySelector('input[name="payment"][value="standard"]');
+                if (standardPayment) {
+                    standardPayment.checked = true;
+                }
+            }
+        }
+
+        function toggleAddons() {
+            const grid = document.getElementById('addons-grid');
+            const trigger = document.getElementById('addons-trigger');
+            const selectAllBtn = document.getElementById('select-all-btn');
+            
+            if (grid && trigger) {
+                const isActive = grid.classList.contains('active');
+                if (isActive) {
+                    grid.classList.remove('active');
+                    trigger.classList.remove('active');
+                    if (selectAllBtn) selectAllBtn.style.display = 'none';
+                } else {
+                    grid.classList.add('active');
+                    trigger.classList.add('active');
+                    if (selectAllBtn) selectAllBtn.style.display = 'block';
+                    updateSelectAllButton();
+                }
+            }
+        }
+
+        function updatePaymentSelection() {
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            const selectedPayment = document.getElementById(`payment-${state.payment}`);
+            if (selectedPayment) {
+                selectedPayment.classList.add('selected');
+            }
+        }
+
+        function toggleAddons() {
+            const grid = document.getElementById('addons-grid');
+            const trigger = document.getElementById('addons-trigger');
+            if (grid && trigger) {
+                const isActive = grid.classList.contains('active');
+                if (isActive) {
+                    grid.classList.remove('active');
+                    trigger.classList.remove('active');
+                } else {
+                    grid.classList.add('active');
+                    trigger.classList.add('active');
+                }
+            }
+        }
+
+        function updateAddonsCount() {
+            const count = state.addons.length;
+            const badge = document.getElementById('addons-count');
+            if (badge) {
+                if (count > 0) {
+                    badge.textContent = count;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        function updateCalculator() {
+            const tier = pricing.tiers[state.tier];
+            if (!tier) return;
+            
+            let projectCost = tier.price;
+            let projectDiscount = 0;
+            let retainerCost = 0;
+            let retainerDiscount = 0;
+            let addonsCost = 0;
+            let totalSavings = 0;
+
+            // Project cost calculation
+            if (state.tier !== 'sprint' && state.payment === 'upfront') {
+                projectDiscount = projectCost * pricing.discounts.upfront;
+                projectCost = projectCost - projectDiscount;
+                totalSavings += projectDiscount;
+            }
+
+            // Retainer calculation
+            if (state.retainerEnabled) {
+                const retainerMonthly = pricing.retainers[state.retainerTier].monthly;
+                const periods = {
+                    monthly: 1,
+                    quarterly: 3,
+                    biannual: 6,
+                    annual: 12
+                };
+                const months = periods[state.retainerPeriod];
+                const discount = pricing.discounts.retainer[state.retainerPeriod];
+                
+                retainerCost = retainerMonthly * months;
+                retainerDiscount = retainerCost * discount;
+                retainerCost = retainerCost - retainerDiscount;
+                totalSavings += retainerDiscount;
+            }
+
+            // Add-ons calculation with quantities
+            addonsCost = state.addons.reduce((sum, addon) => {
+                const qty = addon.quantity || 1;
+                return sum + (addon.basePrice * qty);
+            }, 0);
+
+            // Update UI - Project
+            const projectLabel = document.getElementById('project-label');
+            const projectCostEl = document.getElementById('project-cost');
+            if (projectLabel && projectCostEl) {
+                projectLabel.textContent = tier.name;
+                projectCostEl.textContent = formatCurrency(state.payment === 'upfront' ? projectCost : tier.price);
+            }
+
+            // Project discount row
+            const projectDiscountRow = document.getElementById('project-discount-row');
+            const projectDiscountEl = document.getElementById('project-discount');
+            if (projectDiscountRow && projectDiscountEl) {
+                if (projectDiscount > 0) {
+                    projectDiscountRow.style.display = 'flex';
+                    projectDiscountEl.textContent = '-' + formatCurrency(projectDiscount);
+                } else {
+                    projectDiscountRow.style.display = 'none';
+                }
+            }
+
+            // Retainer rows
+            const retainerCostRow = document.getElementById('retainer-cost-row');
+            const retainerDiscountRow = document.getElementById('retainer-discount-row');
+            
+            if (retainerCostRow) {
+                if (state.retainerEnabled) {
+                    const periods = {
+                        monthly: '1 month',
+                        quarterly: '3 months',
+                        biannual: '6 months',
+                        annual: '12 months'
+                    };
+                    retainerCostRow.style.display = 'flex';
+                    const retainerLabel = document.getElementById('retainer-label');
+                    const retainerCostEl = document.getElementById('retainer-cost');
+                    if (retainerLabel && retainerCostEl) {
+                        retainerLabel.textContent = `${pricing.retainers[state.retainerTier].name} (${periods[state.retainerPeriod]})`;
+                        retainerCostEl.textContent = formatCurrency(retainerCost + retainerDiscount);
+                    }
+
+                    if (retainerDiscountRow && retainerDiscount > 0) {
+                        retainerDiscountRow.style.display = 'flex';
+                        const discountPercent = pricing.discounts.retainer[state.retainerPeriod] * 100;
+                        const retainerDiscountLabel = document.getElementById('retainer-discount-label');
+                        const retainerDiscountEl = document.getElementById('retainer-discount');
+                        if (retainerDiscountLabel && retainerDiscountEl) {
+                            retainerDiscountLabel.textContent = `Retainer Discount (${discountPercent}%)`;
+                            retainerDiscountEl.textContent = '-' + formatCurrency(retainerDiscount);
+                        }
+                    } else if (retainerDiscountRow) {
+                        retainerDiscountRow.style.display = 'none';
+                    }
+                } else {
+                    retainerCostRow.style.display = 'none';
+                    if (retainerDiscountRow) {
+                        retainerDiscountRow.style.display = 'none';
+                    }
+                }
+            }
+
+            // Add-ons row
+            const addonsCostRow = document.getElementById('addons-cost-row');
+            const addonsCostEl = document.getElementById('addons-cost');
+            const addonsLabel = document.getElementById('addons-label');
+            if (addonsCostRow && addonsCostEl && addonsLabel) {
+                if (addonsCost > 0) {
+                    addonsCostRow.style.display = 'flex';
+                    const totalItems = state.addons.reduce((sum, a) => sum + (a.quantity || 1), 0);
+                    addonsLabel.textContent = `Add-ons (${totalItems} ${totalItems === 1 ? 'item' : 'items'})`;
+                    addonsCostEl.textContent = formatCurrency(addonsCost);
+                } else {
+                    addonsCostRow.style.display = 'none';
+                }
+            }
+
+            // Total
+            const total = projectCost + retainerCost + addonsCost;
+            const totalCostEl = document.getElementById('total-cost');
+            if (totalCostEl) {
+                totalCostEl.textContent = formatCurrency(total);
+            }
+
+            // Savings badge
+            const savingsBadge = document.getElementById('savings-badge');
+            const totalSavingsEl = document.getElementById('total-savings');
+            if (savingsBadge && totalSavingsEl) {
+                if (totalSavings > 0) {
+                    savingsBadge.style.display = 'block';
+                    totalSavingsEl.textContent = formatCurrency(totalSavings);
+                } else {
+                    savingsBadge.style.display = 'none';
+                }
+            }
+
+            // Timeline
+            const timelineText = document.getElementById('timeline-text');
+            if (timelineText) {
+                timelineText.textContent = `Delivered in ${tier.timeline}`;
+            }
+
+            // Info badge
+            const infoBadge = document.getElementById('info-badge');
+            if (infoBadge) {
+                if (state.tier === 'sprint') {
+                    infoBadge.style.display = 'block';
+                    infoBadge.innerHTML = '💡 <strong>Strategy Sprint credits forward:</strong> If you proceed with a full project within 30 days, your $7,000 investment credits toward the build.';
+                } else {
+                    infoBadge.style.display = 'none';
+                }
+            }
+
+            // What's included
+            const includesList = document.getElementById('includes-list');
+            if (includesList && tier.includes) {
+                includesList.innerHTML = tier.includes.map(item => `<li>${item}</li>`).join('');
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function showComparison() {
+            const modal = document.getElementById('comparison-modal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function showTierDetail(tierId) {
+            const tier = pricing.tiers[tierId];
+            if (!tier || !tier.details) return;
+
+            const modal = document.getElementById('tier-detail-modal');
+            const titleEl = document.getElementById('tier-detail-title');
+            const bodyEl = document.getElementById('tier-detail-body');
+
+            if (!modal || !titleEl || !bodyEl) return;
+
+            titleEl.textContent = tier.name;
+
+            const html = `
+                <div class="tier-price-box">
+                    <div class="tier-price-large">${formatCurrency(tier.price)}</div>
+                    <div class="tier-timeline-large">${tier.timeline}</div>
+                </div>
+
+                <div class="tier-detail-section">
+                    <p style="color: var(--text-secondary); line-height: 1.6;">${tier.details.overview}</p>
+                </div>
+
+                <div class="tier-detail-section">
+                    <div class="tier-detail-title">What You Get:</div>
+                    <ul class="tier-detail-list">
+                        ${tier.details.deliverables.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="tier-detail-section">
+                    <div class="tier-detail-title">How It Works:</div>
+                    <ul class="tier-detail-list">
+                        ${tier.details.process.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="tier-detail-section">
+                    <div class="tier-detail-title">Best For:</div>
+                    <ul class="tier-detail-list">
+                        ${tier.details.bestFor.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            bodyEl.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // Close modal on overlay click
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+
+        function handleCTA() {
+            const addonsList = state.addons.map(a => {
+                const qty = a.quantity || 1;
+                const subtotal = a.basePrice * qty;
+                const qtyText = qty > 1 ? ` (×${qty})` : '';
+                return `• ${a.name}${qtyText}: ${formatCurrency(subtotal)}`;
+            }).join('\n');
+            
+            const tier = pricing.tiers[state.tier];
+            const tierDescription = tier ? tier.name : 'Project';
+            
+            const message = `I'm interested in:\n\n` +
+                `• ${tierDescription}\n` +
+                (state.tier !== 'sprint' ? `• Payment: ${state.payment === 'upfront' ? '100% Upfront (Save 7.5%)' : 'Standard'}\n` : '') +
+                (state.retainerEnabled ? `• Retainer: ${pricing.retainers[state.retainerTier].name} (${state.retainerPeriod})\n` : '') +
+                (state.addons.length > 0 ? `\nAdd-ons:\n${addonsList}\n` : '') +
+                `\nTotal Investment: ${document.getElementById('total-cost').textContent}`;
+            
+            // Option 1: Open email
+            window.location.href = `mailto:hello@flowtrix.com?subject=Pricing Calculator - Discovery Call Request&body=${encodeURIComponent(message)}`;
+            
+            // Option 2: Open calendar (replace with your actual calendar link)
+            // window.open('https://calendly.com/flowtrix/discovery', '_blank');
+        }
+    </script>
+</body>
+</html>
