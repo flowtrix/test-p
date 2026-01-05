@@ -1211,6 +1211,78 @@
                 display: none;
             }
         }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            width: 280px;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            pointer-events: none;
+        }
+
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: var(--text-primary) transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .tooltip-content {
+                width: 240px;
+                left: auto;
+                right: -10px;
+                transform: none;
+            }
+            
+            .tooltip-content::after {
+                left: auto;
+                right: 20px;
+                transform: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1331,7 +1403,15 @@
                             <input type="checkbox" id="add-retainer">
                             <div class="checkbox-content">
                                 <div class="checkbox-header">
-                                    <div class="checkbox-title">Add Ongoing Retainer</div>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <div class="checkbox-title">Add Ongoing Retainer</div>
+                                        <div class="tooltip">
+                                            <span class="tooltip-icon">ℹ</span>
+                                            <div class="tooltip-content">
+                                                <strong>What's included:</strong> Design, Webflow development, CRO optimization, landing pages, content updates, analytics, and ongoing support based on your selected tier.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="payment-description">Continuous optimization & new landing pages</div>
                                 <div class="payment-description" style="margin-top: 6px; font-size: 0.8125rem; color: var(--text-secondary);">
@@ -1545,6 +1625,13 @@
                                             <option value="4000">Factors.ai - $4,000</option>
                                             <option value="3000">Segment - $3,000</option>
                                             <option value="4500">Stripe Advanced - $4,500</option>
+                                            <option value="3500">Calendly - $3,500</option>
+                                            <option value="4000">Intercom - $4,000</option>
+                                            <option value="3500">Zapier - $3,500</option>
+                                            <option value="4500">Marketo - $4,500</option>
+                                            <option value="3500">Drift - $3,500</option>
+                                            <option value="4000">Clearbit - $4,000</option>
+                                            <option value="4500">Pardot - $4,500</option>
                                             <option value="5000">Custom API - $5,000</option>
                                         </select>
                                     </div>
@@ -1569,28 +1656,80 @@
                             </label>
 
                             <!-- Creative & Motion -->
-                            <label class="service-item" data-service="launch-videos">
-                                <input type="checkbox" class="service-checkbox" data-price="8000" data-name="Launch Videos" data-type="single">
+                            <div class="service-item" data-service="launch-videos">
+                                <input type="checkbox" class="service-checkbox" data-price="10000" data-name="Launch Videos" data-type="dropdown" data-service-id="launch-videos">
                                 <div class="service-content">
                                     <div class="service-name">Launch Videos</div>
+                                    <div class="dropdown-selector" id="dropdown-launch-videos" style="display: none;">
+                                        <label class="dropdown-label">Duration:</label>
+                                        <select class="dropdown-select" id="select-launch-videos" onchange="updateLaunchVideoPrice()">
+                                            <option value="10000">60 seconds - $10,000</option>
+                                            <option value="15000">90 seconds - $15,000</option>
+                                            <option value="20000">120 seconds - $20,000</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="service-price">$8,000</div>
-                            </label>
+                                <div class="service-price" id="price-launch-videos">$10,000</div>
+                            </div>
 
-                            <label class="service-item" data-service="motion-design">
-                                <input type="checkbox" class="service-checkbox" data-price="4000" data-name="Motion Design (Rive/Lottie)" data-type="single">
+                            <div class="service-item" data-service="motion-design">
+                                <input type="checkbox" class="service-checkbox" data-price="250" data-name="Motion Design (Rive/Lottie)" data-type="quantity" data-service-id="motion-design">
                                 <div class="service-content">
                                     <div class="service-name">Motion Design (Rive/Lottie)</div>
+                                    <div class="quantity-selector" id="quantity-motion-design" style="display: none;">
+                                        <span class="quantity-label">Animations:</span>
+                                        <div class="quantity-controls">
+                                            <button type="button" class="quantity-btn" onclick="updateQuantity('motion-design', -1); event.stopPropagation();">−</button>
+                                            <span class="quantity-value" id="qty-motion-design">1</span>
+                                            <button type="button" class="quantity-btn" onclick="updateQuantity('motion-design', 1); event.stopPropagation();">+</button>
+                                        </div>
+                                        <span class="quantity-subtotal" id="subtotal-motion-design">$250</span>
+                                    </div>
                                 </div>
-                                <div class="service-price">$4,000</div>
-                            </label>
+                                <div class="service-price" id="price-motion-design">$250/anim</div>
+                            </div>
 
-                            <label class="service-item" data-service="3d-animation">
-                                <input type="checkbox" class="service-checkbox" data-price="5000" data-name="3D Animation (Spline)" data-type="single">
+                            <div class="service-item" data-service="3d-animation">
+                                <input type="checkbox" class="service-checkbox" data-price="3000" data-name="3D Animation (Spline)" data-type="quantity" data-service-id="3d-animation">
                                 <div class="service-content">
                                     <div class="service-name">3D Animation (Spline)</div>
+                                    <div class="quantity-selector" id="quantity-3d-animation" style="display: none;">
+                                        <span class="quantity-label">Animations:</span>
+                                        <div class="quantity-controls">
+                                            <button type="button" class="quantity-btn" onclick="updateQuantity('3d-animation', -1); event.stopPropagation();">−</button>
+                                            <span class="quantity-value" id="qty-3d-animation">1</span>
+                                            <button type="button" class="quantity-btn" onclick="updateQuantity('3d-animation', 1); event.stopPropagation();">+</button>
+                                        </div>
+                                        <span class="quantity-subtotal" id="subtotal-3d-animation">$3,000</span>
+                                    </div>
                                 </div>
-                                <div class="service-price">$5,000</div>
+                                <div class="service-price" id="price-3d-animation">$3K/anim</div>
+                            </div>
+
+                            <!-- Pitch Decks -->
+                            <div class="service-item" data-service="pitch-deck-sales">
+                                <input type="checkbox" class="service-checkbox" data-price="667" data-name="Sales Pitch Deck" data-type="slides" data-service-id="pitch-deck-sales">
+                                <div class="service-content">
+                                    <div class="service-name">Sales Pitch Deck</div>
+                                    <div class="quantity-selector" id="quantity-pitch-deck-sales" style="display: none;">
+                                        <span class="quantity-label">Slides:</span>
+                                        <div class="quantity-controls">
+                                            <button type="button" class="quantity-btn" onclick="updateSlides('pitch-deck-sales', -1); event.stopPropagation();">−</button>
+                                            <span class="quantity-value" id="qty-pitch-deck-sales">15</span>
+                                            <button type="button" class="quantity-btn" onclick="updateSlides('pitch-deck-sales', 1); event.stopPropagation();">+</button>
+                                        </div>
+                                        <span class="quantity-subtotal" id="subtotal-pitch-deck-sales">$10,000</span>
+                                    </div>
+                                </div>
+                                <div class="service-price" id="price-pitch-deck-sales">$10K/deck</div>
+                            </div>
+
+                            <label class="service-item" data-service="pitch-deck-funding">
+                                <input type="checkbox" class="service-checkbox" data-price="15000" data-name="Funding Pitch Deck" data-type="single">
+                                <div class="service-content">
+                                    <div class="service-name">Funding Pitch Deck</div>
+                                </div>
+                                <div class="service-price">$15,000</div>
                             </label>
 
                             <!-- Migration & Ongoing -->
@@ -1864,7 +2003,7 @@
             'landing-custom': 'Fully custom landing pages designed specifically for your campaigns and conversion goals',
             'hubspot': 'Complete HubSpot integration including forms, tracking, and CRM synchronization',
             'salesforce': 'Advanced Salesforce integration with lead routing, custom fields, and automation',
-            'custom-integration': 'Custom integration with third-party tools and APIs tailored to your needs',
+            'custom-integration': 'Custom integration with third-party tools and APIs tailored to your business needs',
             'cms-filtering': 'Advanced filtering and search capabilities for your CMS collections',
             'multilang': 'Multi-language setup with locale switching and translated content management',
             'chatbot': 'AI-powered chatbot integration for customer support and lead qualification',
@@ -1872,6 +2011,8 @@
             'launch-videos': 'Professional launch videos for product announcements, feature releases, and marketing campaigns',
             'motion-design': 'Interactive motion graphics using Rive or Lottie for engaging micro-interactions and animations',
             '3d-animation': 'Custom 3D animations and interactive elements using Spline for immersive web experiences',
+            'pitch-deck-sales': 'Professional sales pitch deck with compelling narrative, visual design, and conversion-focused messaging',
+            'pitch-deck-funding': 'Investor-ready funding pitch deck with financial projections, market analysis, and compelling storytelling',
             'seo-retainer': 'Monthly SEO services including content optimization, technical SEO, and performance monitoring',
             'migration': 'Platform migration service to move your existing site to Webflow while preserving design and content'
         };
@@ -2107,10 +2248,14 @@
                 'landing-custom': 1,
                 'multilang': 1,
                 'migration': 10,
-                'seo-retainer': 20
+                'seo-retainer': 20,
+                'motion-design': 1,
+                '3d-animation': 1,
+                'pitch-deck-sales': 15
             },
             integrationPrices: {
-                'custom-integration': 3000
+                'custom-integration': 3000,
+                'launch-videos': 10000
             },
             migrationSource: 'wordpress'
         };
@@ -2220,6 +2365,7 @@
                 const basePrice = parseFloat(e.target.dataset.price);
                 let quantity = 1;
                 let hours = 20;
+                let slides = 15;
                 
                 if (serviceType === 'quantity' && serviceId) {
                     quantity = state.quantities[serviceId] || 1;
@@ -2229,6 +2375,12 @@
                     }
                 } else if (serviceType === 'hours' && serviceId) {
                     hours = state.quantities[serviceId] || 20;
+                    const quantitySelector = document.getElementById(`quantity-${serviceId}`);
+                    if (quantitySelector) {
+                        quantitySelector.style.display = 'flex';
+                    }
+                } else if (serviceType === 'slides' && serviceId) {
+                    slides = state.quantities[serviceId] || 15;
                     const quantitySelector = document.getElementById(`quantity-${serviceId}`);
                     if (quantitySelector) {
                         quantitySelector.style.display = 'flex';
@@ -2256,6 +2408,7 @@
                     basePrice: basePrice,
                     quantity: quantity,
                     hours: hours,
+                    slides: slides,
                     type: serviceType
                 });
             } else {
@@ -2267,6 +2420,11 @@
                         quantitySelector.style.display = 'none';
                     }
                 } else if (serviceType === 'hours' && serviceId) {
+                    const quantitySelector = document.getElementById(`quantity-${serviceId}`);
+                    if (quantitySelector) {
+                        quantitySelector.style.display = 'none';
+                    }
+                } else if (serviceType === 'slides' && serviceId) {
                     const quantitySelector = document.getElementById(`quantity-${serviceId}`);
                     if (quantitySelector) {
                         quantitySelector.style.display = 'none';
@@ -2449,6 +2607,50 @@
             updateCalculator();
         }
 
+        function updateLaunchVideoPrice() {
+            const select = document.getElementById('select-launch-videos');
+            if (!select) return;
+            
+            const newPrice = parseFloat(select.value);
+            state.integrationPrices['launch-videos'] = newPrice;
+            
+            const priceDisplay = document.getElementById('price-launch-videos');
+            if (priceDisplay) {
+                priceDisplay.textContent = formatCurrency(newPrice);
+            }
+            
+            const service = state.services.find(s => s.id === 'launch-videos');
+            if (service) {
+                service.basePrice = newPrice;
+            }
+            
+            updateCalculator();
+        }
+
+        function updateSlides(serviceId, delta) {
+            const current = state.quantities[serviceId] || 15;
+            const newSlides = Math.max(5, Math.min(50, current + delta));
+            state.quantities[serviceId] = newSlides;
+            
+            const qtyDisplay = document.getElementById(`qty-${serviceId}`);
+            if (qtyDisplay) {
+                qtyDisplay.textContent = newSlides;
+            }
+            
+            const service = state.services.find(s => s.id === serviceId);
+            if (service) {
+                service.slides = newSlides;
+                // Calculate price: $667 per slide (approx $10k for 15 slides)
+                const price = 667 * newSlides;
+                const subtotalDisplay = document.getElementById(`subtotal-${serviceId}`);
+                if (subtotalDisplay) {
+                    subtotalDisplay.textContent = formatCurrency(price);
+                }
+            }
+            
+            updateCalculator();
+        }
+
         function updateTierSelection() {
             // Remove selected class from all tiers
             document.querySelectorAll('.tier-option').forEach(option => {
@@ -2574,6 +2776,9 @@
             servicesCost = state.services.reduce((sum, service) => {
                 if (service.type === 'hours') {
                     const price = (service.hours / 20) * 5000;
+                    return sum + price;
+                } else if (service.type === 'slides') {
+                    const price = 667 * service.slides;
                     return sum + price;
                 } else if (service.type === 'dropdown') {
                     const price = state.integrationPrices[service.id] || service.basePrice;
@@ -2745,6 +2950,8 @@
                         
                         if (s.type === 'hours') {
                             displayText = `<strong>${s.name} (${s.hours} hours/mo)</strong>: ${description}`;
+                        } else if (s.type === 'slides') {
+                            displayText = `<strong>${s.name} (${s.slides} slides)</strong>: ${description}`;
                         } else if (s.type === 'migration') {
                             const sourceMap = {
                                 'wordpress': 'WordPress',
@@ -2756,6 +2963,21 @@
                             };
                             const source = sourceMap[state.migrationSource] || 'WordPress';
                             displayText = `<strong>${s.name} from ${source} (${s.quantity} pages)</strong>: ${description}`;
+                        } else if (s.type === 'dropdown') {
+                            // Show the selected option for dropdowns
+                            let selectedOption = '';
+                            if (s.id === 'custom-integration') {
+                                const select = document.getElementById('select-custom-integration');
+                                if (select) {
+                                    selectedOption = ` - ${select.options[select.selectedIndex].text.split(' - ')[0]}`;
+                                }
+                            } else if (s.id === 'launch-videos') {
+                                const select = document.getElementById('select-launch-videos');
+                                if (select) {
+                                    selectedOption = ` (${select.options[select.selectedIndex].text.split(' - ')[0]})`;
+                                }
+                            }
+                            displayText = `<strong>${s.name}${selectedOption}</strong>: ${description}`;
                         } else if (s.quantity && s.quantity > 1) {
                             displayText = `<strong>${s.name} (×${s.quantity})</strong>: ${description}`;
                         } else {
@@ -2894,6 +3116,9 @@
                     if (s.type === 'hours') {
                         const price = (s.hours / 20) * 5000;
                         message += `• ${s.name} (${s.hours} hours/mo): ${formatCurrency(price)}\n`;
+                    } else if (s.type === 'slides') {
+                        const price = 667 * s.slides;
+                        message += `• ${s.name} (${s.slides} slides): ${formatCurrency(price)}\n`;
                     } else if (s.type === 'migration') {
                         const sourceMap = {
                             'wordpress': 'WordPress',
@@ -2908,7 +3133,19 @@
                         message += `• ${s.name} from ${source} (${s.quantity} pages): ${formatCurrency(subtotal)}\n`;
                     } else if (s.type === 'dropdown') {
                         const price = state.integrationPrices[s.id] || s.basePrice;
-                        message += `• ${s.name}: ${formatCurrency(price)}\n`;
+                        let selectedOption = '';
+                        if (s.id === 'custom-integration') {
+                            const select = document.getElementById('select-custom-integration');
+                            if (select) {
+                                selectedOption = ` - ${select.options[select.selectedIndex].text.split(' - ')[0]}`;
+                            }
+                        } else if (s.id === 'launch-videos') {
+                            const select = document.getElementById('select-launch-videos');
+                            if (select) {
+                                selectedOption = ` (${select.options[select.selectedIndex].text.split(' - ')[0]})`;
+                            }
+                        }
+                        message += `• ${s.name}${selectedOption}: ${formatCurrency(price)}\n`;
                     } else {
                         const qty = s.quantity || 1;
                         const subtotal = s.basePrice * qty;
