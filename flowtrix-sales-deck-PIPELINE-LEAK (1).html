@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowtrix - Enterprise Website Transformation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-lighter: #dbeafe;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --background: #ffffff;
+            --background-alt: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 16px 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+            font-size: 0.9375rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            padding-top: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--primary-lighter);
+            border: 1px solid var(--primary-light);
+            border-radius: 50px;
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-lighter);
+        }
+
+        /* Problem Section */
+        .problem-section {
+            background: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .problem-card {
+            background: var(--background-alt);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+
+        .problem-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .problem-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .problem-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Strategy Sprint Section */
+        .sprint-section {
+            background: linear-gradient(135deg, var(--warning-light) 0%, var(--background) 100%);
+            border-top: 3px solid var(--warning);
+            border-bottom: 3px solid var(--warning);
+        }
+
+        .sprint-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid var(--warning);
+        }
+
+        .sprint-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sprint-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .sprint-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .sprint-tagline {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .sprint-price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--warning);
+            margin-bottom: 20px;
+        }
+
+        .sprint-credit {
+            background: var(--success-light);
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .credit-title {
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+
+        .credit-text {
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        .sprint-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        .sprint-features li {
+            padding: 12px 0;
+            padding-left: 32px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .sprint-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--warning);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .sprint-timeline {
+            background: var(--background-alt);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .timeline-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .timeline-value {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* Packages Section */
+        .packages-section {
+            background: var(--background-alt);
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid var(--border);
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .package-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .package-card.popular {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-lighter) 0%, white 100%);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: var(--shadow);
+            letter-spacing: 0.5px;
+        }
+
+        .package-header {
+            margin-bottom: 30px;
+        }
+
+        .package-name {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .package-tagline {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .package-pricing {
+            margin: 24px 0;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .price-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .price-original {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            display: inline-block;
+            background: var(--success-light);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border: 1px solid var(--success);
+            margin-left: 8px;
+        }
+
+        .package-roi {
+            background: var(--success-light);
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .roi-label {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .roi-value {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .package-features {
+            list-style: none;
+            margin: 30px 0;
+            flex-grow: 1;
+        }
+
+        .package-features li {
+            padding: 12px 0;
+            padding-left: 32px;
+            position: relative;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.9375rem;
+        }
+
+        .package-features li:last-child {
+            border-bottom: none;
+        }
+
+        .package-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .package-scope {
+            background: var(--background-alt);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .scope-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .scope-value {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        /* Add-ons Section */
+        .addons-section {
+            background: white;
+        }
+
+        .addons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .addon-card {
+            background: var(--background-alt);
+            padding: 32px;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .addon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .addon-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .addon-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .addon-price {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .addon-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* Discount Info */
+        .discount-section {
+            background: var(--background-alt);
+        }
+
+        .discount-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .discount-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .discount-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--success);
+        }
+
+        .discount-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .discount-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .discount-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 12px;
+        }
+
+        .discount-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            background: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 60px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .comparison-table th {
+            background: var(--background-alt);
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .comparison-table td {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .comparison-table .check {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .comparison-table .cross {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--background-alt);
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Retainer Section */
+        .retainer-section {
+            background: var(--background-alt);
+        }
+
+        .retainer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .retainer-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .retainer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .retainer-card.popular {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .retainer-header {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .retainer-name {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .retainer-hours {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .retainer-pricing {
+            margin: 24px 0;
+        }
+
+        .retainer-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .retainer-period {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .commitment-options {
+            background: var(--background-alt);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .commitment-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .commitment-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .commitment-option:last-child {
+            border-bottom: none;
+        }
+
+        .commitment-period {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .commitment-discount {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .retainer-features {
+            list-style: none;
+        }
+
+        .retainer-features li {
+            padding: 10px 0;
+            padding-left: 28px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .retainer-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        /* ROI Calculator */
+        .roi-section {
+            background: linear-gradient(135deg, var(--primary-lighter) 0%, white 100%);
+            border-top: 3px solid var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .calculator-container {
+            max-width: 1000px;
+            margin: 40px auto 0;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid var(--primary);
+        }
+
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 14px 16px;
+            background: var(--background-alt);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .result-box {
+            background: var(--background-alt);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .result-box:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .result-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .result-subtext {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Social Proof */
+        .social-proof {
+            background: white;
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            background: var(--background-alt);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .testimonial-content {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 24px;
+            font-size: 1.125rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .author-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .author-info .name {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .author-info .title {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            text-align: center;
+            padding: 100px 0;
+            color: white;
+        }
+
+        .cta-section .section-title {
+            color: white;
+        }
+
+        .cta-section .section-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .btn-white:hover {
+            background: var(--background-alt);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-white {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            font-weight: 700;
+        }
+
+        .btn-outline-white:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .packages-grid,
+            .retainer-grid {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 30px 20px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .problem-grid,
+            .addons-grid,
+            .discount-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-inputs,
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            .sprint-container,
+            .calculator-container {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .stat-value {
+                font-size: 2.5rem;
+            }
+
+            .price-value,
+            .retainer-price,
+            .sprint-price {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">FLOWTRIX</div>
+            <ul class="nav-links">
+                <li><a href="#problem">Problem</a></li>
+                <li><a href="#sprint">Get Started</a></li>
+                <li><a href="#packages">Packages</a></li>
+                <li><a href="#addons">Add-ons</a></li>
+                <li><a href="#comparison">Compare</a></li>
+                <li><a href="#roi">ROI</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-tag">Enterprise Website Transformation</div>
+            <h1>Turn Your Website Into<br>A Pipeline Machine</h1>
+            <p class="hero-subtitle">
+                We transform Series A-D company websites from digital brochures 
+                into strategic assets that close enterprise deals.
+            </p>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">9x</div>
+                    <div class="stat-label">Average ROI</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">$500K+</div>
+                    <div class="stat-label">Pipeline Impact</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">8-12</div>
+                    <div class="stat-label">Weeks to Launch</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="problem-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">The Problem</div>
+                <h2 class="section-title">Why Enterprise Websites Fail</h2>
+                <p class="section-subtitle">
+                    Your website was built for users. But enterprise deals are won with buying committees.
+                </p>
+            </div>
+
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">🎯</div>
+                    <h3 class="problem-title">Single Audience Architecture</h3>
+                    <p class="problem-description">
+                        Built for end-users only. CFOs, CISOs, and CTOs can't find the validation they need to sign off.
+                    </p>
+                </div>
+
+                <div class="problem-card">
+                    <div class="problem-icon">📊</div>
+                    <h3 class="problem-title">No Strategic Positioning</h3>
+                    <p class="problem-description">
+                        Generic messaging that doesn't differentiate you from competitors or speak to specific pain points.
+                    </p>
+                </div>
+
+                <div class="problem-card">
+                    <div class="problem-icon">🚀</div>
+                    <h3 class="problem-title">Campaign Bottleneck</h3>
+                    <p class="problem-description">
+                        Can't launch campaigns fast enough. No landing page system means relying on developers for every test.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategy Sprint Section -->
+    <section id="sprint" class="sprint-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Not Sure What You Need?</div>
+                <h2 class="section-title">Start With Strategy</h2>
+                <p class="section-subtitle">
+                    De-risk your investment with a comprehensive 10-day strategic audit and roadmap.
+                </p>
+            </div>
+
+            <div class="sprint-container">
+                <div class="sprint-header">
+                    <div class="sprint-badge">Entry Point</div>
+                    <h3 class="sprint-title">Strategy Sprint</h3>
+                    <p class="sprint-tagline">10-Day Strategic Audit + Roadmap</p>
+                    <div class="sprint-price">$7,000</div>
+                </div>
+
+                <div class="sprint-credit">
+                    <div class="credit-title">💰 Credits Forward to Your Project</div>
+                    <p class="credit-text">
+                        If you proceed with any tier within 30 days, your full $7,000 investment 
+                        credits toward the build. Zero risk, pure strategic clarity.
+                    </p>
+                </div>
+
+                <ul class="sprint-features">
+                    <li>Stakeholder interviews & competitive analysis</li>
+                    <li>Complete sitemap architecture</li>
+                    <li>UX direction & wireframe concepts</li>
+                    <li>Visual moodboard with design direction</li>
+                    <li>Technical SEO audit & recommendations</li>
+                    <li>Conversion tracking & analytics plan</li>
+                    <li>Migration risk assessment (if applicable)</li>
+                    <li>Prioritized roadmap in Notion</li>
+                </ul>
+
+                <div class="sprint-timeline">
+                    <div class="timeline-label">Delivery Timeline</div>
+                    <div class="timeline-value">10 Business Days</div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 30px;">Start Strategy Sprint</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section id="packages" class="packages-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Full Transformation</div>
+                <h2 class="section-title">Choose Your Package</h2>
+                <p class="section-subtitle">
+                    Fixed-scope packages designed for different stages and needs. 
+                    Clear pricing, clear value, clear outcomes.
+                </p>
+            </div>
+
+            <div class="packages-grid">
+                <!-- Foundation Package -->
+                <div class="package-card">
+                    <div class="package-header">
+                        <h3 class="package-name">Foundation</h3>
+                        <p class="package-tagline">Launch Fast</p>
+                    </div>
+
+                    <div class="package-pricing">
+                        <span class="price-value">$25K</span>
+                        <div>
+                            <span class="price-original">Market value: $45K</span>
+                            <span class="discount-badge">Save $20K</span>
+                        </div>
+                    </div>
+
+                    <div class="package-roi">
+                        <div class="roi-label">EXPECTED IMPACT</div>
+                        <div class="roi-value">$150K+ pipeline in 6 months</div>
+                    </div>
+
+                    <div class="package-scope">
+                        <div class="scope-label">Typical Scope</div>
+                        <div class="scope-value">8-12 pages • 6-7 weeks</div>
+                    </div>
+
+                    <ul class="package-features">
+                        <li>Modern, mobile-responsive design</li>
+                        <li>Baseline CMS for blog/resources</li>
+                        <li>Core integrations (forms, analytics)</li>
+                        <li>SEO optimization</li>
+                        <li>2 revision rounds</li>
+                        <li>2 hours team training</li>
+                        <li>2 weeks post-launch support</li>
+                    </ul>
+
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;">Learn More</button>
+                </div>
+
+                <!-- Growth Package -->
+                <div class="package-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="package-header">
+                        <h3 class="package-name">Growth</h3>
+                        <p class="package-tagline">Drive Pipeline</p>
+                    </div>
+
+                    <div class="package-pricing">
+                        <span class="price-value">$45K</span>
+                        <div>
+                            <span class="price-original">Market value: $85K</span>
+                            <span class="discount-badge">Save $40K</span>
+                        </div>
+                    </div>
+
+                    <div class="package-roi">
+                        <div class="roi-label">EXPECTED IMPACT</div>
+                        <div class="roi-value">$400K+ pipeline in 6 months</div>
+                    </div>
+
+                    <div class="package-scope">
+                        <div class="scope-label">Typical Scope</div>
+                        <div class="scope-value">15-20 pages • 8-10 weeks</div>
+                    </div>
+
+                    <ul class="package-features">
+                        <li>Everything in Foundation, plus:</li>
+                        <li>Deep positioning & messaging workshop</li>
+                        <li>Dual-audience architecture</li>
+                        <li>Landing page template system</li>
+                        <li>Advanced conversion tracking</li>
+                        <li>Scalable CMS with relationships</li>
+                        <li>2 post-launch optimization iterations</li>
+                        <li>4 hours extended training</li>
+                        <li>1 month post-launch support</li>
+                    </ul>
+
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</button>
+                </div>
+
+                <!-- Enterprise Package -->
+                <div class="package-card">
+                    <div class="package-header">
+                        <h3 class="package-name">Enterprise</h3>
+                        <p class="package-tagline">Transform & Scale</p>
+                    </div>
+
+                    <div class="package-pricing">
+                        <span class="price-value">$75K</span>
+                        <div>
+                            <span class="price-original">Market value: $140K</span>
+                            <span class="discount-badge">Save $65K</span>
+                        </div>
+                    </div>
+
+                    <div class="package-roi">
+                        <div class="roi-label">EXPECTED IMPACT</div>
+                        <div class="roi-value">$800K+ pipeline in 6 months</div>
+                    </div>
+
+                    <div class="package-scope">
+                        <div class="scope-label">Typical Scope</div>
+                        <div class="scope-value">20-30+ pages • 10-12 weeks</div>
+                    </div>
+
+                    <ul class="package-features">
+                        <li>Everything in Growth, plus:</li>
+                        <li>Executive-level discovery workshops</li>
+                        <li>Multi-product narrative architecture</li>
+                        <li>Advanced CMS with multi-collection</li>
+                        <li>2 custom integrations included</li>
+                        <li>Platform migration support</li>
+                        <li>Advanced security & compliance</li>
+                        <li>4 post-launch optimization iterations</li>
+                        <li>Extended multi-team training</li>
+                        <li>2 months post-launch support</li>
+                    </ul>
+
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add-ons Section -->
+    <section id="addons" class="addons-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Flexible Customization</div>
+                <h2 class="section-title">Optional Add-Ons</h2>
+                <p class="section-subtitle">
+                    Extend any package with additional services tailored to your needs.
+                </p>
+            </div>
+
+            <div class="addons-grid">
+                <div class="addon-card">
+                    <div class="addon-icon">✍️</div>
+                    <h3 class="addon-name">Homepage Copywriting</h3>
+                    <div class="addon-price">$3,000</div>
+                    <p class="addon-description">Conversion-focused homepage copy that speaks to your audience</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">📝</div>
+                    <h3 class="addon-name">Page Copywriting</h3>
+                    <div class="addon-price">$1,200/page</div>
+                    <p class="addon-description">Professional copy for core pages</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🎯</div>
+                    <h3 class="addon-name">Landing Pages</h3>
+                    <div class="addon-price">$1.5K-$2.5K</div>
+                    <p class="addon-description">Template or custom campaign pages</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🔌</div>
+                    <h3 class="addon-name">HubSpot Integration</h3>
+                    <div class="addon-price">$2,000</div>
+                    <p class="addon-description">Forms, tracking, and CRM sync</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">⚡</div>
+                    <h3 class="addon-name">Salesforce Integration</h3>
+                    <div class="addon-price">$4,000</div>
+                    <p class="addon-description">Advanced CRM routing & sync</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🔍</div>
+                    <h3 class="addon-name">Advanced CMS Filtering</h3>
+                    <div class="addon-price">$3,000</div>
+                    <p class="addon-description">Dynamic filtering & search</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🌐</div>
+                    <h3 class="addon-name">Multi-language</h3>
+                    <div class="addon-price">$2,000/locale</div>
+                    <p class="addon-description">Localization setup per language</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🤖</div>
+                    <h3 class="addon-name">AI Chatbot</h3>
+                    <div class="addon-price">$2,500</div>
+                    <p class="addon-description">AI-powered chat integration</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">📊</div>
+                    <h3 class="addon-name">Analytics Setup</h3>
+                    <div class="addon-price">$2,000</div>
+                    <p class="addon-description">GA4 + GTM implementation</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🚚</div>
+                    <h3 class="addon-name">Platform Migration</h3>
+                    <div class="addon-price">$10,000</div>
+                    <p class="addon-description">WordPress, HubSpot, etc.</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🎨</div>
+                    <h3 class="addon-name">Brand Identity</h3>
+                    <div class="addon-price">$8,000+</div>
+                    <p class="addon-description">Complete brand system</p>
+                </div>
+
+                <div class="addon-card">
+                    <div class="addon-icon">🎬</div>
+                    <h3 class="addon-name">Launch Videos</h3>
+                    <div class="addon-price">$10K-$20K</div>
+                    <p class="addon-description">Professional product videos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Discounts Section -->
+    <section id="discounts" class="discount-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Smart Savings</div>
+                <h2 class="section-title">Available Discounts</h2>
+                <p class="section-subtitle">
+                    Multiple ways to maximize your investment and save on your project.
+                </p>
+            </div>
+
+            <div class="discount-grid">
+                <div class="discount-card">
+                    <div class="discount-icon">💰</div>
+                    <h3 class="discount-title">Upfront Payment</h3>
+                    <div class="discount-value">Save 7.5%</div>
+                    <p class="discount-description">
+                        Pay 100% upfront at contract signing and save 7.5% on your project cost. 
+                        Applied to all tiers.
+                    </p>
+                </div>
+
+                <div class="discount-card">
+                    <div class="discount-icon">🎯</div>
+                    <h3 class="discount-title">Strategy Sprint Credit</h3>
+                    <div class="discount-value">$7,000</div>
+                    <p class="discount-description">
+                        Complete our Strategy Sprint first. If you proceed within 30 days, 
+                        the full $7K credits toward your project.
+                    </p>
+                </div>
+
+                <div class="discount-card">
+                    <div class="discount-icon">📅</div>
+                    <h3 class="discount-title">Retainer Commitment</h3>
+                    <div class="discount-value">Up to 15%</div>
+                    <p class="discount-description">
+                        Commit to a retainer upfront: 5% quarterly, 10% biannual, 15% annual. 
+                        Discounts apply to retainer cost.
+                    </p>
+                </div>
+
+                <div class="discount-card">
+                    <div class="discount-icon">🤝</div>
+                    <h3 class="discount-title">Bundle & Save</h3>
+                    <div class="discount-value">Stack All</div>
+                    <p class="discount-description">
+                        Combine discounts! Upfront payment + Strategy Sprint credit + annual retainer 
+                        for maximum savings.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section id="comparison" class="comparison-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Compare Packages</div>
+                <h2 class="section-title">Side-by-Side Comparison</h2>
+                <p class="section-subtitle">
+                    See exactly what's included in each tier and find the perfect fit.
+                </p>
+            </div>
+
+            <div class="table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Foundation</th>
+                            <th>Growth</th>
+                            <th>Enterprise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Investment</td>
+                            <td>$25,000</td>
+                            <td>$45,000</td>
+                            <td>$75,000</td>
+                        </tr>
+                        <tr>
+                            <td>Timeline</td>
+                            <td>6-7 weeks</td>
+                            <td>8-10 weeks</td>
+                            <td>10-12 weeks</td>
+                        </tr>
+                        <tr>
+                            <td>Typical Pages</td>
+                            <td>8-12</td>
+                            <td>15-20</td>
+                            <td>20-30+</td>
+                        </tr>
+                        <tr>
+                            <td>Discovery Depth</td>
+                            <td>Light</td>
+                            <td>Deep positioning</td>
+                            <td>Executive workshops</td>
+                        </tr>
+                        <tr>
+                            <td>Dual-Audience Architecture</td>
+                            <td><span class="cross">—</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Landing Page System</td>
+                            <td><span class="cross">—</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>CMS Capability</td>
+                            <td>Baseline</td>
+                            <td>Scalable</td>
+                            <td>Advanced multi-collection</td>
+                        </tr>
+                        <tr>
+                            <td>Custom Integrations</td>
+                            <td>Basic (forms)</td>
+                            <td>Standard</td>
+                            <td>2 included</td>
+                        </tr>
+                        <tr>
+                            <td>Design Revisions</td>
+                            <td>2 rounds</td>
+                            <td>2 rounds</td>
+                            <td>3 rounds</td>
+                        </tr>
+                        <tr>
+                            <td>Post-Launch Optimization</td>
+                            <td><span class="cross">—</span></td>
+                            <td>2 iterations</td>
+                            <td>4 iterations</td>
+                        </tr>
+                        <tr>
+                            <td>Migration Support</td>
+                            <td>Add-on</td>
+                            <td>Add-on</td>
+                            <td><span class="check">✓ Included</span></td>
+                        </tr>
+                        <tr>
+                            <td>Training</td>
+                            <td>2 hours</td>
+                            <td>4 hours</td>
+                            <td>Extended sessions</td>
+                        </tr>
+                        <tr>
+                            <td>Post-Launch Support</td>
+                            <td>2 weeks</td>
+                            <td>1 month</td>
+                            <td>2 months</td>
+                        </tr>
+                        <tr>
+                            <td>Best For</td>
+                            <td>Series A, fast launch</td>
+                            <td>Series B, campaigns</td>
+                            <td>Series C+, complex orgs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Retainer Plans -->
+    <section id="retainers" class="retainer-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Ongoing Support</div>
+                <h2 class="section-title">Retainer Plans</h2>
+                <p class="section-subtitle">
+                    Continuous optimization, new landing pages, and high-velocity updates.
+                </p>
+            </div>
+
+            <div class="retainer-grid">
+                <!-- Essential Retainer -->
+                <div class="retainer-card">
+                    <div class="retainer-header">
+                        <h3 class="retainer-name">Essential</h3>
+                        <p class="retainer-hours">20 hours per month</p>
+                    </div>
+
+                    <div class="retainer-pricing">
+                        <div class="retainer-price">$5,000</div>
+                        <div class="retainer-period">per month</div>
+                    </div>
+
+                    <div class="commitment-options">
+                        <div class="commitment-title">Commitment Discounts</div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">3 months</span>
+                            <span class="commitment-discount">Save 5%</span>
+                        </div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">6 months</span>
+                            <span class="commitment-discount">Save 10%</span>
+                        </div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">12 months</span>
+                            <span class="commitment-discount">Save 15%</span>
+                        </div>
+                    </div>
+
+                    <ul class="retainer-features">
+                        <li>Maintenance & small updates</li>
+                        <li>Content changes</li>
+                        <li>Bug fixes & troubleshooting</li>
+                        <li>Monthly performance reports</li>
+                        <li>Priority support</li>
+                    </ul>
+
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;">Learn More</button>
+                </div>
+
+                <!-- Growth Retainer -->
+                <div class="retainer-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="retainer-header">
+                        <h3 class="retainer-name">Growth</h3>
+                        <p class="retainer-hours">40 hours per month</p>
+                    </div>
+
+                    <div class="retainer-pricing">
+                        <div class="retainer-price">$8,000</div>
+                        <div class="retainer-period">per month</div>
+                    </div>
+
+                    <div class="commitment-options">
+                        <div class="commitment-title">Commitment Discounts</div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">3 months</span>
+                            <span class="commitment-discount">Save 5%</span>
+                        </div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">6 months</span>
+                            <span class="commitment-discount">Save 10%</span>
+                        </div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">12 months</span>
+                            <span class="commitment-discount">Save 15%</span>
+                        </div>
+                    </div>
+
+                    <ul class="retainer-features">
+                        <li>Everything in Essential, plus:</li>
+                        <li>2-3 new landing pages per month</li>
+                        <li>A/B testing & CRO experiments</li>
+                        <li>Conversion optimization</li>
+                        <li>Analytics & insights</li>
+                        <li>Strategic recommendations</li>
+                    </ul>
+
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</button>
+                </div>
+
+                <!-- Scale Retainer -->
+                <div class="retainer-card">
+                    <div class="retainer-header">
+                        <h3 class="retainer-name">Scale</h3>
+                        <p class="retainer-hours">80 hours per month</p>
+                    </div>
+
+                    <div class="retainer-pricing">
+                        <div class="retainer-price">$15,000</div>
+                        <div class="retainer-period">per month</div>
+                    </div>
+
+                    <div class="commitment-options">
+                        <div class="commitment-title">Commitment Discounts</div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">3 months</span>
+                            <span class="commitment-discount">Save 5%</span>
+                        </div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">6 months</span>
+                            <span class="commitment-discount">Save 10%</span>
+                        </div>
+                        <div class="commitment-option">
+                            <span class="commitment-period">12 months</span>
+                            <span class="commitment-discount">Save 15%</span>
+                        </div>
+                    </div>
+
+                    <ul class="retainer-features">
+                        <li>Everything in Growth, plus:</li>
+                        <li>High-velocity feature roadmap</li>
+                        <li>Weekly release cadence</li>
+                        <li>Dedicated account manager</li>
+                        <li>Strategic partnership</li>
+                        <li>Quarterly planning sessions</li>
+                    </ul>
+
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Pipeline Leak Calculator -->
+    <section id="roi" class="roi-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Pipeline Leak Calculator</div>
+                <h2 class="section-title">How Much Pipeline Are You Losing?</h2>
+                <p class="section-subtitle">
+                    Outdated enterprise websites leak qualified leads. Calculate your current losses.
+                </p>
+            </div>
+
+            <div style="max-width: 1200px; margin: 40px auto 0;">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 32px;">
+                    
+                    <!-- Input Card -->
+                    <div class="card" style="background: white; padding: 40px; border-radius: 16px; box-shadow: var(--shadow-xl);">
+                        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 28px;">Your Current Metrics</h3>
+                        
+                        <!-- Monthly Traffic -->
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-primary);">Monthly Website Traffic</label>
+                            <input type="number" id="leak-traffic" value="25000" min="1000" step="1000" 
+                                style="width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem;">
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 6px;">Unique visitors per month</div>
+                        </div>
+
+                        <!-- Conversion Rate Slider -->
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-primary);">
+                                Current Conversion Rate
+                            </label>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <input type="range" id="leak-conversion" min="0.5" max="5" step="0.1" value="1.5" 
+                                    style="flex: 1; height: 8px; border-radius: 4px; -webkit-appearance: none; background: var(--border);">
+                                <span id="leak-conversion-display" style="min-width: 60px; text-align: center; font-weight: 700; color: var(--primary); font-size: 1.125rem;">1.5%</span>
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 6px;">Visitors converting to qualified leads (demos, calls)</div>
+                        </div>
+
+                        <!-- Deal Size -->
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-primary);">Average Deal Size</label>
+                            <div style="position: relative;">
+                                <span style="position: absolute; left: 16px; top: 14px; color: var(--text-secondary); font-weight: 600;">$</span>
+                                <input type="number" id="leak-deal" value="50000" min="10000" step="5000" 
+                                    style="width: 100%; padding: 14px 16px 14px 36px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem;">
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 6px;">Average contract value (ACV)</div>
+                        </div>
+
+                        <!-- Close Rate Slider -->
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-primary);">Lead-to-Close Rate</label>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <input type="range" id="leak-close" min="10" max="40" step="1" value="20" 
+                                    style="flex: 1; height: 8px; border-radius: 4px; -webkit-appearance: none; background: var(--border);">
+                                <span id="leak-close-display" style="min-width: 60px; text-align: center; font-weight: 700; color: var(--primary); font-size: 1.125rem;">20%</span>
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 6px;">Qualified leads that close into customers</div>
+                        </div>
+
+                        <!-- Website Age (KEY FACTOR) -->
+                        <div style="margin-bottom: 28px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-primary);">
+                                When Was Your Website Last Redesigned? 
+                                <span style="background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 10px; font-size: 0.75rem; margin-left: 8px;">Key Factor</span>
+                            </label>
+                            <select id="leak-age" style="width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; background: white;">
+                                <option value="0.05">Less than 1 year ago</option>
+                                <option value="0.10">1-2 years ago</option>
+                                <option value="0.20">2-3 years ago</option>
+                                <option value="0.30" selected>3-4 years ago</option>
+                                <option value="0.40">4+ years ago (or never)</option>
+                            </select>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 6px;">Older sites leak more leads due to outdated UX, slow speed, poor mobile experience</div>
+                        </div>
+
+                        <!-- Calculate Button -->
+                        <button onclick="calculateLeak()" style="width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.125rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+                            Calculate My Pipeline Leak →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Card (Shows after calculation) -->
+                <div id="leak-results" style="display: none; margin-top: 32px; animation: slideIn 0.5s ease;">
+                    <div style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: white; padding: 50px; border-radius: 16px; box-shadow: var(--shadow-xl);">
+                        <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 32px;">Your Current Pipeline Leaks</h3>
+                        
+                        <!-- Leak Summary -->
+                        <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 12px; padding: 28px; margin-bottom: 28px;">
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 0.9375rem; opacity: 0.9; margin-bottom: 8px;">You're Currently Losing</div>
+                                <div style="font-size: 3.5rem; font-weight: 800; line-height: 1;" id="leak-monthly-leads">47</div>
+                                <div style="font-size: 1.125rem; opacity: 0.9; margin-top: 8px;">Qualified Leads Per Month</div>
+                            </div>
+                            <div style="border-top: 1px solid rgba(255,255,255,0.3); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 6px;">Annual Lost Deals</div>
+                                    <div style="font-size: 2rem; font-weight: 700;" id="leak-annual-deals">113</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 6px;">Lost Revenue</div>
+                                    <div style="font-size: 2rem; font-weight: 700;" id="leak-revenue">$5.7M</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Why This Happens -->
+                        <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 12px; padding: 24px; margin-bottom: 28px;">
+                            <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 16px;">🔍 Common Leak Sources</div>
+                            <div style="display: grid; gap: 12px;">
+                                <div style="display: flex; align-items: start; gap: 12px;">
+                                    <div style="min-width: 24px; font-size: 1.25rem;">❌</div>
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 2px;">Slow Page Speed</div>
+                                        <div style="font-size: 0.875rem; opacity: 0.9;">Every 1s delay = 7% conversion loss</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: start; gap: 12px;">
+                                    <div style="min-width: 24px; font-size: 1.25rem;">❌</div>
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 2px;">Poor Mobile Experience</div>
+                                        <div style="font-size: 0.875rem; opacity: 0.9;">60% of enterprise buyers research on mobile</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: start; gap: 12px;">
+                                    <div style="min-width: 24px; font-size: 1.25rem;">❌</div>
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 2px;">Single-Audience Design</div>
+                                        <div style="font-size: 0.875rem; opacity: 0.9;">Ignores CFO, CISO, CTO buying committee needs</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: start; gap: 12px;">
+                                    <div style="min-width: 24px; font-size: 1.25rem;">❌</div>
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 2px;">Weak Trust Signals</div>
+                                        <div style="font-size: 0.875rem; opacity: 0.9;">Missing case studies, security badges, compliance info</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Solution Box -->
+                        <div style="background: rgba(255, 255, 255, 0.95); color: var(--text-primary); border-radius: 12px; padding: 28px;">
+                            <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary);">💡 The Fix</div>
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 1rem; line-height: 1.7; color: var(--text-secondary);">
+                                    A strategic website transformation addressing these leaks typically costs <strong style="color: var(--text-primary);">$25K-$75K</strong> depending on your scope.
+                                </div>
+                                <div style="margin-top: 12px; padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 0.875rem; color: #92400e;">
+                                    <strong>Ultra-conservative Year 1 estimate:</strong> We assume only <strong>5% recovery</strong> of lost leads in Year 1 (not the full 
+                                    <span id="leak-percentage">30%</span> leak). Why so low? Implementation takes time, sales cycles are long, and full impact builds over 12-24 months.
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                                <div style="background: #f0fdf4; padding: 16px; border-radius: 8px; border: 2px solid #86efac;">
+                                    <div style="font-size: 0.8125rem; color: #065f46; margin-bottom: 4px; font-weight: 600;">Year 1 Recovery</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #065f46;" id="leak-conservative-revenue">$855K</div>
+                                    <div style="font-size: 0.75rem; color: #065f46; margin-top: 4px;">Annual (5% recovery)</div>
+                                </div>
+                                <div style="background: #eff6ff; padding: 16px; border-radius: 8px; border: 2px solid var(--primary);">
+                                    <div style="font-size: 0.8125rem; color: var(--primary-dark); margin-bottom: 4px; font-weight: 600;">Realistic Payback</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-dark);" id="leak-payback">8 months</div>
+                                    <div style="font-size: 0.75rem; color: var(--primary-dark); margin-top: 4px;">At $45K investment</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;">
+                                <a href="mailto:hello@flowtrix.com?subject=Pipeline%20Leak%20Assessment" style="display: inline-block; padding: 14px 32px; background: var(--primary); color: white; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s ease;">
+                                    Book Free Pipeline Assessment →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Methodology Note -->
+                    <div style="margin-top: 24px; padding: 20px; background: white; border-radius: 12px; border: 2px solid var(--border);">
+                        <div style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7;">
+                            <strong style="color: var(--text-primary);">Methodology:</strong> Pipeline leak % is based on website age and industry benchmarks. 
+                            We calculate lost leads as: <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace;">current leads × leak factor</code>. 
+                            Year 1 recovery assumes fixing only <strong>5%</strong> of the leak (ultra-conservative) because implementation takes time, 
+                            sales cycles are long, and full impact builds over 12-24 months. Real client results vary based on implementation quality and market conditions.
+                            <a href="#comparison" style="color: var(--primary); font-weight: 600; margin-left: 8px;">See our packages →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Social Proof -->
+    <section id="proof" class="social-proof">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Trusted By</div>
+                <h2 class="section-title">What Our Clients Say</h2>
+                <p class="section-subtitle">
+                    Real results from real companies we've transformed.
+                </p>
+            </div>
+
+            <div class="testimonials">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Flowtrix transformed our website from a digital brochure into a lead generation machine. 
+                        We saw a 450% increase in qualified leads within 3 months."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JD</div>
+                        <div class="author-info">
+                            <div class="name">John Doe</div>
+                            <div class="title">VP Marketing, Series B SaaS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "The dual-audience architecture was a game-changer. We can now speak to both 
+                        technical users and C-level buyers effectively on the same site."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SK</div>
+                        <div class="author-info">
+                            <div class="name">Sarah Kim</div>
+                            <div class="title">CMO, Enterprise AI Platform</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Best agency investment we've made. The landing page system alone has 
+                        saved us months of developer time and accelerated our campaigns."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MP</div>
+                        <div class="author-info">
+                            <div class="name">Mike Peterson</div>
+                            <div class="title">Director of Growth, Cybersecurity Startup</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ready to Transform Your Website?</h2>
+                <p class="section-subtitle">
+                    Book a 30-minute strategy call to discuss your needs and see if we're a fit.
+                </p>
+            </div>
+            <div class="cta-buttons">
+                <a href="/cdn-cgi/l/email-protection#3f575a5353507f595350484b4d5647115c5052" class="btn btn-white">Book Discovery Call</a>
+                <a href="#sprint" class="btn btn-outline-white">Start With Strategy Sprint</a>
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+        // ============================================
+        // PIPELINE LEAK CALCULATOR
+        // Conservative, credible, diagnostic approach
+        // ============================================
+        
+        console.log("🔍 Pipeline Leak Calculator loaded");
+        
+        // Update slider displays
+        document.getElementById('leak-conversion').addEventListener('input', (e) => {
+            document.getElementById('leak-conversion-display').textContent = e.target.value + '%';
+        });
+        
+        document.getElementById('leak-close').addEventListener('input', (e) => {
+            document.getElementById('leak-close-display').textContent = e.target.value + '%';
+        });
+        
+        // Slider styling
+        const style = document.createElement('style');
+        style.textContent = `
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: var(--primary);
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: var(--primary);
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                border: none;
+            }
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Main calculation function
+        function calculateLeak() {
+            console.log("📊 Calculating pipeline leak...");
+            
+            // Get inputs
+            const traffic = parseInt(document.getElementById('leak-traffic').value);
+            const conversionRate = parseFloat(document.getElementById('leak-conversion').value) / 100;
+            const dealSize = parseInt(document.getElementById('leak-deal').value);
+            const closeRate = parseFloat(document.getElementById('leak-close').value) / 100;
+            const leakFactor = parseFloat(document.getElementById('leak-age').value);
+            
+            console.log("Inputs:", {traffic, conversionRate, dealSize, closeRate, leakFactor});
+            
+            // Calculate current performance (annual)
+            const currentMonthlyLeads = traffic * conversionRate;
+            const currentAnnualLeads = currentMonthlyLeads * 12;
+            
+            // Calculate LEAK (leads you're losing due to website issues)
+            const leakedMonthlyLeads = currentMonthlyLeads * leakFactor;
+            const leakedAnnualLeads = leakedMonthlyLeads * 12;
+            
+            // Lost deals and revenue
+            const lostAnnualDeals = Math.round(leakedAnnualLeads * closeRate);
+            const lostRevenue = lostAnnualDeals * dealSize;
+            
+            // Ultra-conservative recovery (assume you fix only 5% of the leak in Year 1)
+            // Why 5%? Because enterprise sales cycles are long, implementation takes time,
+            // and full impact won't be felt immediately
+            const conservativeRecoveryRate = 0.05;
+            const recoveredLeads = leakedAnnualLeads * conservativeRecoveryRate;
+            const recoveredDeals = Math.round(recoveredLeads * closeRate);
+            const conservativeRecoveredRevenue = recoveredDeals * dealSize;
+            
+            // Payback calculation (assuming $45K mid-tier investment)
+            const typicalInvestment = 45000;
+            const monthlyRecoveredRevenue = conservativeRecoveredRevenue / 12;
+            const paybackMonths = monthlyRecoveredRevenue > 0 
+                ? Math.max(3, Math.round(typicalInvestment / monthlyRecoveredRevenue))
+                : 12; // Minimum 3 months payback to be credible
+            
+            console.log("Results:", {
+                leakedMonthlyLeads: Math.round(leakedMonthlyLeads),
+                lostAnnualDeals,
+                lostRevenue,
+                conservativeRecoveredRevenue,
+                paybackMonths
+            });
+            
+            // Update UI
+            document.getElementById('leak-monthly-leads').textContent = Math.round(leakedMonthlyLeads);
+            document.getElementById('leak-annual-deals').textContent = lostAnnualDeals;
+            document.getElementById('leak-revenue').textContent = formatMoney(lostRevenue);
+            document.getElementById('leak-percentage').textContent = Math.round(leakFactor * 100) + '%';
+            document.getElementById('leak-conservative-revenue').textContent = formatMoney(conservativeRecoveredRevenue);
+            document.getElementById('leak-payback').textContent = paybackMonths + ' months';
+            
+            // Show results
+            document.getElementById('leak-results').style.display = 'block';
+            
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('leak-results').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest' 
+                });
+            }, 100);
+            
+            console.log("✅ Results displayed");
+        }
+        
+        function formatMoney(amount) {
+            if (amount >= 1000000) {
+                return '$' + (amount / 1000000).toFixed(1) + 'M';
+            } else if (amount >= 1000) {
+                return '$' + (amount / 1000).toFixed(0) + 'K';
+            }
+            return '$' + amount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+        }
+        
+        // Smooth scroll for nav
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        
+        console.log("✅ Pipeline Leak Calculator ready");
+    </script>
+</body>
+</html>
